@@ -3,633 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive NFT Storybook</title>
+    <title>The Ducklopedia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Wizard's Tower background */
-            background-image: url('https://images.unsplash.com/photo-1620588152345-095a940689b2?q=80&w=2574&auto=format&fit=crop');
-            background-color: #1e1b18; /* Fallback color */
-            background-size: cover;
+            background-color: #1a1a1a;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-circles.png'), url('https://images.unsplash.com/photo-1594780353995-950c422416c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80');
+            background-size: auto, cover;
             background-position: center;
             background-attachment: fixed;
         }
-        .book-title, .story-title {
+        .book-title {
             font-family: 'Playfair Display', serif;
         }
-        /* Page transition remains the same */
-        .page {
-            transition: opacity 0.5s ease-in-out;
-        }
-        .page.hidden {
-            opacity: 0;
-            position: absolute;
-            pointer-events: none;
-        }
-        .page:not(.hidden) {
-            opacity: 1;
-        }
-
-        /* Custom book styling */
         .book-container {
-            background-color: #fdfaf3; /* Aged parchment color */
-            border: 10px solid #4a2c2a; /* Dark wood/leather color for the cover */
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 15px rgba(0,0,0,0.4); /* Deeper shadow + inner shadow for depth */
+            background-color: #fdf6e3; /* Parchment color */
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+            border: 2px solid #d4cba6;
         }
-        /* Custom scrollbar for traits page */
+        .tab-content {
+            display: none; /* Hidden by default */
+        }
+        .tab-content.active {
+            display: block; /* Shown when active */
+        }
+        .tab-button {
+             background-color: #f3eadd;
+             color: #6b5a3f;
+             transition: all 0.3s ease;
+             border: 1px solid #d4cba6;
+        }
+        .tab-button:hover {
+            background-color: #e9dec9;
+            border-color: #bfae8b;
+        }
+        .tab-button.active {
+            background-color: #8c6a3e;
+            color: #fdf6e3;
+            border-color: #6b5a3f;
+        }
         .custom-scrollbar::-webkit-scrollbar {
             width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #fdfaf3; /* Parchment color */
+            background: #e9dec9;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #926c54; /* A lighter brown */
+            background: #bfae8b;
             border-radius: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #4a2c2a; /* Darker brown on hover */
+            background: #a99875;
         }
     </style>
 </head>
-<body class="text-stone-800 flex items-center justify-center min-h-screen p-4">
+<body class="text-stone-800 flex items-center justify-center min-h-screen p-2 sm:p-4">
 
     <!-- Main Book Container -->
-    <div class="book-container w-full max-w-4xl rounded-2xl p-6 sm:p-8 md:p-12 flex flex-col">
-        <header class="text-center mb-8">
-            <h1 class="book-title text-4xl md:text-5xl font-bold text-amber-900">Ducklopedia</h1>
-            <p class="text-stone-500 mt-2">An Encyclopedia of the Solana Duck World</p>
+    <div class="book-container w-full max-w-5xl rounded-2xl p-4 sm:p-6 md:p-8 flex flex-col">
+        <header class="text-center mb-6">
+            <h1 class="book-title text-5xl md:text-6xl font-bold text-amber-900">The Ducklopedia</h1>
+            <p class="text-stone-600 mt-2 text-sm">An Encyclopedia of the Decent Ducks Sanctuary</p>
         </header>
 
-        <!-- Pages Container -->
-        <div id="pages-container" class="relative flex-grow">
-            <!-- Page 1: Title Page -->
-            <div class="page" data-page="0">
-                <div class="flex flex-col items-center justify-center h-full text-center min-h-[55vh]">
-                    <h2 class="book-title text-6xl md:text-7xl font-bold text-amber-900">Ducklopedia</h2>
-                    <p class="text-stone-600 mt-4 text-xl">An Illustrated Guide to the Ducks of Solana</p>
-                    <div class="mt-12 text-stone-500 animate-pulse">
-                       <p>Click "Next" to begin your journey.</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Tab Navigation -->
+        <nav id="tab-nav" class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 border-b border-amber-800/20 pb-4">
+            <button class="tab-button active px-3 py-2 text-sm sm:px-4 sm:text-base font-semibold rounded-lg" data-target="home">Home</button>
+            <button class="tab-button px-3 py-2 text-sm sm:px-4 sm:text-base font-semibold rounded-lg" data-target="feathers">Feathers</button>
+            <button class="tab-button px-3 py-2 text-sm sm:px-4 sm:text-base font-semibold rounded-lg" data-target="attire">Attire</button>
+            <button class="tab-button px-3 py-2 text-sm sm:px-4 sm:text-base font-semibold rounded-lg" data-target="headwear">Headwear</button>
+            <button class="tab-button px-3 py-2 text-sm sm:px-4 sm:text-base font-semibold rounded-lg" data-target="eyewear">Eyewear</button>
+            <button class="tab-button px-3 py-2 text-sm sm:px-4 sm:text-base font-semibold rounded-lg" data-target="armaments">Armaments</button>
+            <button class="tab-button px-3 py-2 text-sm sm:px-4 sm:text-base font-semibold text-red-800 bg-red-200/50 border-red-400/50 hover:bg-red-300/50" data-target="legends">Legends</button>
+        </nav>
 
-            <!-- Page 2: A Study of Feathers -->
-            <div class="page hidden" data-page="1">
-                <div class="text-center">
-                    <h2 class="story-title text-3xl font-bold text-amber-800 mb-6">A Study of Feathers</h2>
-                </div>
-                <!-- Scrollable container for traits -->
-                <div class="space-y-6 max-h-[55vh] overflow-y-auto pr-4 custom-scrollbar">
-                    <!-- White Feathers -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/ykpIueW.png" alt="White Pekin Duck" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">White - The Pekin Plumage</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">
-                                Feathers of the stout Pekin, prized for their substance. A duck cloaked in this pure white plumage is one of resilience and strength, known for its hearty and formidable presence in any flock.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Black Feathers -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/Udxju5b.png" alt="Black Runner Duck" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Black - The Runner's Shadow</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">
-                                The glossy black of the Runner Duck, a coat built for swiftness. These ducks move like living shadows, quick and unseen, masters of agility who can outpace any threat.
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Gold Feathers -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/JR0MRco.png" alt="Gold Buff Duck" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Gold - The Buff's Blessing</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">
-                                Golden feathers of the Buff Duck shimmer with latent magic. In males, this blessing bestows great strength. In females, it promises abundance and life, a truly prosperous plumage.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Grey Feathers -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/CFq3KSK.png" alt="Grey Duck" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Grey - The Humble Guise</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">
-                                The simple Grey of the "Ugly Duckling." What many see as plain, the wise know holds the promise of a grand transformation. It is a coat of hidden potential and profound inner strength.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Green Feathers -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/k8fedpu.png" alt="Green Mallard Duck" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Green - The Mallard's Mark</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">
-                                The familiar green of the Mallard, a color seen across countless ponds. Though called "common," it represents a deep connection to nature and an unparalleled adaptability—the foundation of all duck-kind.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page 3: Attire of the Ancients (Part 1) -->
-            <div class="page hidden" data-page="2">
-                <div class="text-center">
-                    <h2 class="story-title text-3xl font-bold text-amber-800 mb-6">Attire of the Ancients Pt. 1</h2>
-                </div>
-                <div class="space-y-6 max-h-[55vh] overflow-y-auto pr-4 custom-scrollbar">
-                    <!-- Blue Hoodie -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/rvd6atN.png" alt="Blue Hoodie" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Blue Hoodie</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">The everyday garb of the modern duck, signifying a laid-back, approachable nature for a quiet day by the pond.</p>
-                        </div>
-                    </div>
-                     <!-- Green Hoodie -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/1cLnmGf.png" alt="Green Hoodie" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Green Hoodie</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">A comfortable and casual attire, perfect for a casual flight through the metaverse with an earthy touch.</p>
-                        </div>
-                    </div>
-                    <!-- Beige Shirt -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/HeQLAo3.png" alt="Beige Shirt" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Beige Shirt</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">A step above the casual, this shirt is for the duck with a touch of class, bridging the gap between comfort and formal flair.</p>
-                        </div>
-                    </div>
-                    <!-- Black Tuxedo -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/kop8UVE.png" alt="Black Tux" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Black Tuxedo</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">The classic attire for exclusive digital galas, worn by ducks of importance and high standing in the community.</p>
-                        </div>
-                    </div>
-                    <!-- Blue Tuxedo -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/zdblK9W.png" alt="Blue Tux" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Blue Tuxedo</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">A bold choice for cocktail events, this tuxedo lets a duck move through high society with effortless grace and a splash of color.</p>
-                        </div>
-                    </div>
-                     <!-- Apprentice Wizard -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/1aVvs6Z.png" alt="Apprentice Wizard" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Apprentice Wizard Robes</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">Worn by those who study the arcane arts of the blockchain. These robes mark a duck on the path to greatness and mystical knowledge.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-             <!-- Page 4: Attire of the Ancients (Part 2) -->
-            <div class="page hidden" data-page="3">
-                <div class="text-center">
-                    <h2 class="story-title text-3xl font-bold text-amber-800 mb-6">Attire of the Ancients Pt. 2</h2>
-                </div>
-                <div class="space-y-6 max-h-[55vh] overflow-y-auto pr-4 custom-scrollbar">
-                    <!-- Camo Jacket -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/ll7VU9i.png" alt="Camo Jacket" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Camo Jacket</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">A grounding garment for the digital explorer. It serves as a constant reminder to "touch grass" and stay connected to one's roots.</p>
-                        </div>
-                    </div>
-                    <!-- Apprentice Chef -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/M7pjNVR.png" alt="Apprentice Chef" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Apprentice Chef's Whites</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">The uniform of an aspiring culinary artist. It signifies the beginning of a journey to master a craft, full of ambition and potential.</p>
-                        </div>
-                    </div>
-                    <!-- Head Chef -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/8KrhIrN.png" alt="Head Chef" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">Head Chef's Whites</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">The revered attire of a master. This is a symbol of status, dedication, and the pinnacle of culinary achievement within the flock.</p>
-                        </div>
-                    </div>
-                     <!-- Robe -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/vAjMuBy.png" alt="Luxe Robe" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">The Luxe Robe</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">The ultimate statement of comfort and luxury. This robe is for the duck who has truly made it, enjoying a life of leisure and opulence.</p>
-                        </div>
-                    </div>
-                    <!-- Blue Jacket -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/H71O3Ow.png" alt="Blue Jacket" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">The Fresh Jacket</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">Crisp, clean, and effortlessly cool. This blue jacket is the definition of fresh, worn by ducks who are always ahead of the trend.</p>
-                        </div>
-                    </div>
-                     <!-- Cowboy -->
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/pR9x7uI.png" alt="Cowboy" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div>
-                            <h3 class="font-bold text-lg text-amber-900">The Cowboy's Garb</h3>
-                            <p class="text-sm text-stone-700 leading-relaxed">The attire of the untamed frontier. Worn by lawless and wild ducks, this gear signifies a rebellious spirit and a life lived by one's own rules.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page 5: Headwear of the Flock (Part 1) -->
-            <div class="page hidden" data-page="4">
-                <div class="text-center">
-                    <h2 class="story-title text-3xl font-bold text-amber-800 mb-6">Headwear of the Flock Pt. 1</h2>
-                </div>
-                <div class="space-y-6 max-h-[55vh] overflow-y-auto pr-4 custom-scrollbar">
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/bwrkVZW.png" alt="Wizard Hat" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Wizard Hat</h3><p class="text-sm text-stone-700 leading-relaxed">A hat brimming with arcane energy. Worn by ducks who dabble in the mysterious arts of the blockchain. Definitely not the Cabal.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/f2Qp1qW.png" alt="Flower" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Flower</h3><p class="text-sm text-stone-700 leading-relaxed">A simple, humble bloom. A reminder that even the most beautiful things can grow from dirt and determination.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/2ubp86T.png" alt="Pretty Flower" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Pretty Flower</h3><p class="text-sm text-stone-700 leading-relaxed">For the duck with a gentle soul and a love for nature's simple elegance. A sign of peace and natural beauty.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/62mEMmj.png" alt="Beige Beanie" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Beige Beanie</h3><p class="text-sm text-stone-700 leading-relaxed">The classic headwear for the thoughtful duck. Casual, comfortable, and understatedly cool.</p></div>
-                    </div>
-                     <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/CkQIh0h.png" alt="Orange Beanie" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Orange Beanie</h3><p class="text-sm text-stone-700 leading-relaxed">A splash of vibrant color for the duck who isn't afraid to stand out from the flock. Warmth and style combined.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/nsm3vrI.png" alt="Maroon Beanie" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Maroon Beanie</h3><p class="text-sm text-stone-700 leading-relaxed">A deeper, more sophisticated take on the casual beanie, for the duck with a mature and relaxed sense of fashion.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/e9sUXv4.png" alt="Chef Hat" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Chef's Toque</h3><p class="text-sm text-stone-700 leading-relaxed">Only for qualified cookers. When a duck wearing this hat speaks, you say, "Yes, Chef." A mark of true culinary authority.</p></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page 6: Headwear of the Flock (Part 2) -->
-            <div class="page hidden" data-page="5">
-                <div class="text-center">
-                    <h2 class="story-title text-3xl font-bold text-amber-800 mb-6">Headwear of the Flock Pt. 2</h2>
-                </div>
-                 <div class="space-y-6 max-h-[55vh] overflow-y-auto pr-4 custom-scrollbar">
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/GDeppff.png" alt="King's Crown" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">King's Crown</h3><p class="text-sm text-stone-700 leading-relaxed">A crown for a King among ducks. This signifies royalty, power, and a commanding presence in any pond or digital kingdom.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/O9AczWQ.png" alt="Forward Blue Cap" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Forward Blue Cap</h3><p class="text-sm text-stone-700 leading-relaxed">The go-to cap for a day out. Simple, classic, and always in style. A sign of a duck with a focused, forward-thinking attitude.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/24jIJli.png" alt="Backward Blue Cap" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Backward Blue Cap</h3><p class="text-sm text-stone-700 leading-relaxed">For the duck with a rebellious streak and a carefree vibe. This look is all about relaxed confidence.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/358JHgb.png" alt="Forward Green Cap" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Forward Green Cap</h3><p class="text-sm text-stone-700 leading-relaxed">An earthy and grounded style choice, perfect for the duck that feels at home in nature and on the chain.</p></div>
-                    </div>
-                     <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/0oxrXp5.png" alt="Backward Green Cap" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Backward Green Cap</h3><p class="text-sm text-stone-700 leading-relaxed">A laid-back style that shows a connection to the wilder side of the digital world. Effortlessly cool.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/BApG54k.png" alt="Forward Purple Cap" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Forward Purple Cap</h3><p class="text-sm text-stone-700 leading-relaxed">A cap that denotes a touch of royalty and creativity. For the duck who thinks outside the box and leads with vision.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/b5eWQX2.png" alt="Backward Purple Cap" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Backward Purple Cap</h3><p class="text-sm text-stone-700 leading-relaxed">A playful and imaginative style, worn by ducks who aren't afraid to be different and march to the beat of their own drum.</p></div>
-                    </div>
-                </div>
-            </div>
+        <!-- Content Container -->
+        <div id="content-container" class="flex-grow min-h-[60vh]">
             
-            <!-- Page 7: Headwear of the Flock (Part 3) -->
-            <div class="page hidden" data-page="6">
-                <div class="text-center">
-                    <h2 class="story-title text-3xl font-bold text-amber-800 mb-6">Headwear of the Flock Pt. 3</h2>
-                </div>
-                 <div class="space-y-6 max-h-[55vh] overflow-y-auto pr-4 custom-scrollbar">
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/VNNATuZ.png" alt="Cowboy Hat 1" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Drifter's Hat</h3><p class="text-sm text-stone-700 leading-relaxed">The classic cowboy hat for the wandering duck. A symbol of independence and life on the open plains of the metaverse.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/52JgAxU.png" alt="Cowboy Hat 2" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Maverick's Hat</h3><p class="text-sm text-stone-700 leading-relaxed">A darker, more rugged cowboy hat for the duck that walks its own path. A sign of a true maverick in a lawless land.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/LAFdMne.png" alt="Bucket Head" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Bucket Head</h3><p class="text-sm text-stone-700 leading-relaxed">Is it a hat? Is it a helmet? This eccentric headwear is for the uniquely brilliant duck whose genius is often misunderstood.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/B9R3Gei.png" alt="Fancy Top Hat" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Fancy Top Hat</h3><p class="text-sm text-stone-700 leading-relaxed">The height of sophistication. This hat is reserved for the most distinguished ducks, the movers and shakers of high society.</p></div>
-                    </div>
-                     <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/AIcdDzu.png" alt="Casual Top Hat" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Journalist's Hat</h3><p class="text-sm text-stone-700 leading-relaxed">A more casual top hat, often worn by inquisitive ducks who are always on the hunt for the next big story on the blockchain.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/XI3QBAF.png" alt="Bowler Hat" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Bowler Hat</h3><p class="text-sm text-stone-700 leading-relaxed">A touch of old-world charm. This grey bowler hat is for the dapper duck with a timeless sense of style.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/LdKXmRZ.png" alt="Fancy Hat" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Southern Belle</h3><p class="text-sm text-stone-700 leading-relaxed">An elegant and elaborate hat, fit for a garden party. A symbol of grace, charm, and sophisticated southern hospitality.</p></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page 8: Visions & Visors (Part 1) -->
-            <div class="page hidden" data-page="7">
-                <div class="text-center">
-                    <h2 class="story-title text-3xl font-bold text-amber-800 mb-6">Visions & Visors Pt. 1</h2>
-                </div>
-                <div class="space-y-6 max-h-[55vh] overflow-y-auto pr-4 custom-scrollbar">
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/rOOti6Q.png" alt="Eyes 1" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Determined Gaze</h3><p class="text-sm text-stone-700 leading-relaxed">The look of a duck with a plan. These eyes show focus and an unwavering resolve to see their goals through to the end.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/MR175T2.png" alt="Eyes 2" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Weary Stare</h3><p class="text-sm text-stone-700 leading-relaxed">The eyes of a duck who has seen too many market cycles. They hold the wisdom of experience and a deep need for a long nap.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/7poQkMh.png" alt="Eyes 3" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Unimpressed Look</h3><p class="text-sm text-stone-700 leading-relaxed">This duck has seen it all and is impressed by none of it. A sign of a seasoned veteran who is not easily swayed by hype.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/j2DcMVn.png" alt="Eyes 4" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Joyful Squint</h3><p class="text-sm text-stone-700 leading-relaxed">Pure, unadulterated happiness. These eyes belong to a duck that finds joy in the little things, like a perfectly ripe bread crumb.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/gTGkcN6.png" alt="Black Swimming Goggles" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Deep Dive Goggles (Black)</h3><p class="text-sm text-stone-700 leading-relaxed">For exploring the deepest, darkest pools of the liquidity pond. Sleek, stylish, and ready for any aquatic adventure.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/SOPVYLK.png" alt="Yellow Swimming Goggles" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Deep Dive Goggles (Yellow)</h3><p class="text-sm text-stone-700 leading-relaxed">A bright and sunny pair of goggles for the optimistic swimmer who always looks on the bright side of the pond.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/qYm5w6J.png" alt="Blue Swimming Goggles" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Deep Dive Goggles (Blue)</h3><p class="text-sm text-stone-700 leading-relaxed">Cool, calm, and collected. These blue goggles are for the duck who navigates the currents with effortless grace.</p></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page 9: Visions & Visors (Part 2) -->
-            <div class="page hidden" data-page="8">
-                <div class="text-center">
-                    <h2 class="story-title text-3xl font-bold text-amber-800 mb-6">Visions & Visors Pt. 2</h2>
-                </div>
-                 <div class="space-y-6 max-h-[55vh] overflow-y-auto pr-4 custom-scrollbar">
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/h3K0Dvv.png" alt="Black Low Profile Shades" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Low Profile Shades (Black)</h3><p class="text-sm text-stone-700 leading-relaxed">The ultimate in cool. These shades hide a duck's intentions, making them unreadable at the digital poker table.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/QPTbKMs.png" alt="Blue Low Profile Shades" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Low Profile Shades (Blue)</h3><p class="text-sm text-stone-700 leading-relaxed">For the duck that's as cool as ice. These shades bring a calm and collected vibe to any high-stakes situation.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/3RIQ7rC.png" alt="Green Low Profile Shades" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Low Profile Shades (Green)</h3><p class="text-sm text-stone-700 leading-relaxed">A down-to-earth look for a duck that's in tune with the flow of the market and nature alike.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/yMt6YLJ.png" alt="Laser Eyes" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Laser Eyes</h3><p class="text-sm text-stone-700 leading-relaxed">The unmistakable sign of an OG. This duck probably owns Bitcoin and has a gaze that can burn through FUD.</p></div>
-                    </div>
-                     <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/dVDdj9l.png" alt="MLG Pro" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">MLG Pro Shades</h3><p class="text-sm text-stone-700 leading-relaxed">For the elite gamer duck. These shades signify legendary status in the e-sports arena. This OG cannot be phased.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/5gcAoNh.png" alt="Green Visor" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Business Visor (Green)</h3><p class="text-sm text-stone-700 leading-relaxed">This duck is all about growth. The green visor is for the savvy investor who is always looking for the next bull run.</p></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page 10: Visions & Visors (Part 3) -->
-            <div class="page hidden" data-page="9">
-                <div class="text-center">
-                    <h2 class="story-title text-3xl font-bold text-amber-800 mb-6">Visions & Visors Pt. 3</h2>
-                </div>
-                 <div class="space-y-6 max-h-[55vh] overflow-y-auto pr-4 custom-scrollbar">
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/SWg2WqM.png" alt="Yellow Visor" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Business Visor (Yellow)</h3><p class="text-sm text-stone-700 leading-relaxed">A visor that radiates energy and optimism. This duck means business and brings a spark of innovation to every venture.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/mSDeZ7E.png" alt="Blue Visor" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Business Visor (Blue)</h3><p class="text-sm text-stone-700 leading-relaxed">For the tech-savvy duck. This visor is for the builder, the coder, the duck that sees the world in lines of code.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/txsBbs4.png" alt="Purple Visor" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Business Visor (Purple)</h3><p class="text-sm text-stone-700 leading-relaxed">A visor for the creative genius. This duck operates on a different wavelength, bringing visionary ideas to the flock.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/A1kCNKS.png" alt="Rainbow Visor" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Business Visor (Rainbow)</h3><p class="text-sm text-stone-700 leading-relaxed">The ultimate power move. This duck has mastered all aspects of business and sees the full spectrum of possibilities.</p></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page 11: Legendary Armaments & Companions -->
-            <div class="page hidden" data-page="10">
-                <div class="text-center">
-                    <h2 class="story-title text-3xl font-bold text-amber-800 mb-6">Legendary Armaments & Companions</h2>
-                </div>
-                 <div class="space-y-6 max-h-[55vh] overflow-y-auto pr-4 custom-scrollbar">
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/2UnxvdK.png" alt="Red Sword" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Ruby Blade (Rock)</h3><p class="text-sm text-stone-700 leading-relaxed">A blade of unbreakable crimson crystal. In the ancient duel of fate, it represents the unyielding power of Rock, capable of shattering any foe.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/xsFA9Mg.png" alt="Blue Sword" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Sapphire Shear (Scissors)</h3><p class="text-sm text-stone-700 leading-relaxed">A swift and precise blade, forged from a fallen star. It embodies the keen essence of Scissors, destined to sever the threads of destiny.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/DQ3kjfI.png" alt="Green Sword" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Emerald Leaf (Paper)</h3><p class="text-sm text-stone-700 leading-relaxed">A light, ethereal blade crafted from enchanted leaves. It represents the subtle strategy of Paper, able to envelop and overcome brute force.</p></div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/Bpxiqfc.png" alt="Wings" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">Ascendant Wings</h3><p class="text-sm text-stone-700 leading-relaxed">A rare gift, for not all ducks actually fly. These wings allow a duck to soar above the blockchain, a symbol of freedom and a higher perspective.</p></div>
-                    </div>
-                     <div class="flex items-start gap-4">
-                        <img src="https://i.imgur.com/hHs5OUb.png" alt="Baby Duck" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md border-2 border-amber-700/50 p-1 flex-shrink-0">
-                        <div><h3 class="font-bold text-lg text-amber-900">The Duckling Companion</h3><p class="text-sm text-stone-700 leading-relaxed">A loyal friend and a reminder of legacy. We wouldn’t be here without mama duck and her babies; a symbol of innocence and potential.</p></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page 12: The Legends (1 of 1 Title Page) -->
-            <div class="page hidden" data-page="11">
-                <div class="flex flex-col items-center justify-center h-full text-center min-h-[55vh] px-4">
-                    <h2 class="book-title text-6xl md:text-7xl font-bold text-amber-900" style="text-shadow: 1px 1px 10px rgba(74, 44, 42, 0.3);">The Legends</h2>
-                    <div class="w-32 h-px bg-amber-800/40 my-8"></div>
-                    <p class="text-stone-600 text-lg max-w-xl mx-auto leading-loose italic">
-                        Some tales are whispered, others are written. But these... these are <span class="font-bold not-italic text-amber-900">lived</span>. Singular in existence, their code is unique, their lore etched into the very soul of the Solana chain. They are the anomalies, the paragons, the 1-of-1s.
+            <!-- Home Content -->
+            <div id="home" class="tab-content active">
+                <div class="flex flex-col items-center justify-center h-full text-center">
+                    <img src="https://i.imgur.com/pcn60EC.png" alt="The OG Duck Icon" class="w-32 h-32 mb-6 opacity-80">
+                    <h2 class="book-title text-5xl sm:text-6xl font-bold text-amber-900">The Ducklopedia</h2>
+                    <p class="text-stone-700 mt-4 text-lg">A living collection of lore from the Decent Ducks Sanctuary.</p>
+                     <p class="text-stone-800 mt-10 text-lg max-w-xl mx-auto leading-loose font-semibold">
+                       Every duck has a story told through its traits. What does your duck say about you? Join our flock in Discord and share what traits your duck has and what it says about them!
                     </p>
-                     <p class="text-stone-500 mt-10 animate-pulse">
-                        Proceed with reverence. The stories of the unparalleled await.
+                    <a href="#" target="_blank" rel="noopener noreferrer" class="mt-8 px-8 py-3 bg-amber-800 text-stone-100 font-semibold rounded-lg shadow-md hover:bg-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-75 transition-all transform hover:scale-105">
+                        Join the Flock in Discord
+                    </a>
+                </div>
+            </div>
+
+            <!-- Feathers Content -->
+            <div id="feathers" class="tab-content">
+                <h2 class="book-title text-3xl sm:text-4xl text-center text-amber-900 mb-6">Chapter I: Feathers</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[55vh] overflow-y-auto pr-2 custom-scrollbar">
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/ykpIueW.png" class="w-20 h-20 rounded-md flex-shrink-0"><div class="flex-grow">
+                        <h3 class="font-bold text-lg text-amber-900">Pekin Plumage</h3><p class="text-sm text-stone-600">The mark of the Sanctuary's guardians. These feathers are unusually dense, providing natural armor in conflicts over digital territory.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/Udxju5b.png" class="w-20 h-20 rounded-md flex-shrink-0"><div class="flex-grow">
+                        <h3 class="font-bold text-lg text-amber-900">Runner's Shadow</h3><p class="text-sm text-stone-600">Sleek and almost frictionless, these feathers are prized by scouts and messengers who traverse the data streams between ecosystems.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/JR0MRco.png" class="w-20 h-20 rounded-md flex-shrink-0"><div class="flex-grow">
+                        <h3 class="font-bold text-lg text-amber-900">Buff's Blessing</h3><p class="text-sm text-stone-600">Said to be touched by the original code of the Sanctuary, these feathers shimmer with latent magic, enhancing the duck's innate abilities.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/CFq3KSK.png" class="w-20 h-20 rounded-md flex-shrink-0"><div class="flex-grow">
+                        <h3 class="font-bold text-lg text-amber-900">Humble Guise</h3><p class="text-sm text-stone-600">Often underestimated, ducks with these feathers carry the lore of the 'Ugly Duckling,' destined for a great transformation.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/k8fedpu.png" class="w-20 h-20 rounded-md flex-shrink-0"><div class="flex-grow">
+                        <h3 class="font-bold text-lg text-amber-900">Mallard's Mark</h3><p class="text-sm text-stone-600">The most common feather, it symbolizes the heart of the flock. It represents a deep, ancestral connection to the very first ducks of the Sanctuary.</p></div></div>
+                </div>
+            </div>
+
+            <!-- Attire Content -->
+            <div id="attire" class="tab-content">
+                <h2 class="book-title text-3xl sm:text-4xl text-center text-amber-900 mb-6">Chapter II: Attire</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[55vh] overflow-y-auto pr-2 custom-scrollbar">
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/rvd6atN.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Blue Hoodie</h3><p class="text-sm text-stone-600">Standard issue for the pond-side traders and thinkers. A symbol of calm focus amidst market chaos.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/1cLnmGf.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Green Hoodie</h3><p class="text-sm text-stone-600">Worn by the builders and gardeners of the Sanctuary's digital landscapes. A sign of growth and creativity.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/HeQLAo3.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Beige Shirt</h3><p class="text-sm text-stone-600">The preferred attire of diplomats and scholars. Simple, elegant, and respected in every circle.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/kop8UVE.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Black Tuxedo</h3><p class="text-sm text-stone-600">Reserved for the annual token-holder galas and high-stakes council votes. A symbol of elite status.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/zdblK9W.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Blue Tuxedo</h3><p class="text-sm text-stone-600">For those who wish to make a statement at formal events. It speaks of confidence and a flair for the dramatic.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/1aVvs6Z.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Apprentice Robes</h3><p class="text-sm text-stone-600">The uniform for those studying the arcane arts of the blockchain under the Sanctuary's Wizard council.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/ll7VU9i.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Camo Jacket</h3><p class="text-sm text-stone-600">Worn by the explorers who venture into the wild, untamed sectors of the metaverse to chart new territories.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/M7pjNVR.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Apprentice Chef</h3><p class="text-sm text-stone-600">For the aspiring culinary artists who experiment with new recipes in the famed kitchens of the Sanctuary.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/8KrhIrN.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Head Chef</h3><p class="text-sm text-stone-600">A mark of mastery. Only the most revered chefs, whose dishes are legendary, earn this esteemed attire.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/vAjMuBy.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Luxe Robe</h3><p class="text-sm text-stone-600">The ultimate symbol of success and comfort, typically worn by early investors and DAO whales.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/H71O3Ow.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Fresh Jacket</h3><p class="text-sm text-stone-600">The uniform of the innovators and trend-setters who keep the Sanctuary's culture vibrant and evolving.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/pR9x7uI.png" class="w-20 h-20 rounded-md flex-shrink-0"><div><h3 class="font-bold text-lg text-amber-900">Cowboy's Garb</h3><p class="text-sm text-stone-600">Worn by the DeFi cowboys who wrangle volatile assets on the lawless frontiers of the blockchain.</p></div></div>
+                </div>
+            </div>
+
+            <!-- Headwear Content -->
+            <div id="headwear" class="tab-content">
+                <h2 class="book-title text-3xl sm:text-4xl text-center text-amber-900 mb-6">Chapter III: Headwear</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[55vh] overflow-y-auto pr-2 custom-scrollbar">
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/bwrkVZW.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Wizard Hat</h3><p class="text-sm text-stone-600">A powerful focus for on-chain magic. Worn by a secretive order of developers who maintain the Sanctuary's core code.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/f2Qp1qW.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Flower</h3><p class="text-sm text-stone-600">A symbol of the organic, community-grown nature of the Sanctuary. Often worn by community mods and welcomers.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/2ubp86T.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Pretty Flower</h3><p class="text-sm text-stone-600">A rarer bloom, said to only grow in the most peaceful and collaborative corners of the community's Discord.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/62mEMmj.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Beige Beanie</h3><p class="text-sm text-stone-600">For the quiet, consistent builders. This beanie signifies a duck that is always shipping code, art, or ideas.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/CkQIh0h.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Orange Beanie</h3><p class="text-sm text-stone-600">A beacon of optimism and energy. Worn by the motivators and hype-ducks of the flock.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/nsm3vrI.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Maroon Beanie</h3><p class="text-sm text-stone-600">Represents the wisdom of a long-term holder. A sign of patience and deep belief in the Sanctuary's vision.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/e9sUXv4.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Chef's Toque</h3><p class="text-sm text-stone-600">A hat earned, not bought. Given only to those who can cook up the most delicious alpha for the community.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/GDeppff.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">King's Crown</h3><p class="text-sm text-stone-600">A relic from a forgotten era of centralization. Now worn ironically by the staunchest advocates of the DAO.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/O9AczWQ.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Forward Blue Cap</h3><p class="text-sm text-stone-600">The mark of a forward-thinking strategist, always looking two steps ahead in the market.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/24jIJli.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Backward Blue Cap</h3><p class="text-sm text-stone-600">Represents a casual confidence, a duck that is relaxed even during periods of high volatility.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/358JHgb.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Forward Green Cap</h3><p class="text-sm text-stone-600">A symbol for eco-conscious ducks who advocate for sustainable and green blockchain solutions.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/0oxrXp5.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Backward Green Cap</h3><p class="text-sm text-stone-600">The style of a duck who is one with nature, often found meditating by the Sanctuary's real-world ponds.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/BApG54k.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Forward Purple Cap</h3><p class="text-sm text-stone-600">Worn by the dreamers and artists who envision the future of the Sanctuary's brand and lore.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/b5eWQX2.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Backward Purple Cap</h3><p class="text-sm text-stone-600">A sign of playful creativity, this duck is always ready for a meme contest or community game night.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/VNNATuZ.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Drifter's Hat</h3><p class="text-sm text-stone-600">For the sovereign individual. This duck follows no path but its own, embodying the spirit of decentralization.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/52JgAxU.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Maverick's Hat</h3><p class="text-sm text-stone-600">A bolder version of the Drifter's Hat, for the duck that not only walks its own path but carves it for others to follow.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/LAFdMne.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Bucket Head</h3><p class="text-sm text-stone-600">A badge of honor for those who have weathered the stormiest of markets and come out with a smile.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/B9R3Gei.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Fancy Top Hat</h3><p class="text-sm text-stone-600">The hat of choice for the Sanctuary's wealthiest patrons and collectors of fine, digital art.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/AIcdDzu.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Journalist's Hat</h3><p class="text-sm text-stone-600">Worn by the lore-keepers and storytellers who document the history of the Decent Ducks in real-time.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/XI3QBAF.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Bowler Hat</h3><p class="text-sm text-stone-600">A nod to the past, worn by ducks who appreciate the history of finance and see its future in crypto.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/LdKXmRZ.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Southern Belle</h3><p class="text-sm text-stone-600">A symbol of hospitality and community. These ducks are known for their exceptional efforts in onboarding new members.</p></div></div>
+                </div>
+            </div>
+
+            <!-- Eyewear Content -->
+            <div id="eyewear" class="tab-content">
+                <h2 class="book-title text-3xl sm:text-4xl text-center text-amber-900 mb-6">Chapter IV: Eyewear</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[55vh] overflow-y-auto pr-2 custom-scrollbar">
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/rOOti6Q.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Determined Gaze</h3><p class="text-sm text-stone-600">The look of a duck who has read the whitepaper and is committed to the project's long-term success.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/MR175T2.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Weary Stare</h3><p class="text-sm text-stone-600">The eyes of a veteran trader who has survived multiple bear markets and is unfazed by price fluctuations.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/7poQkMh.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Unimpressed Look</h3><p class="text-sm text-stone-600">This duck has seen countless rug-pulls and vaporware, and only gives its approval to projects with real utility.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/j2DcMVn.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Joyful Squint</h3><p class="text-sm text-stone-600">The pure, unadulterated joy of seeing a project you believe in succeed against all odds.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/gTGkcN6.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Dive Goggles (Black)</h3><p class="text-sm text-stone-600">For the serious liquidity pool divers, exploring the deepest and most mysterious pockets of DeFi.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/SOPVYLK.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Dive Goggles (Yellow)</h3><p class="text-sm text-stone-600">Worn by yield farmers who are perpetually optimistic about finding the next golden opportunity.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/qYm5w6J.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Dive Goggles (Blue)</h3><p class="text-sm text-stone-600">The choice of stablecoin swimmers, who navigate the calm, predictable currents of the market.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/h3K0Dvv.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Shades (Black)</h3><p class="text-sm text-stone-600">Hides their intentions during high-stakes NFT auctions. A true poker face.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/QPTbKMs.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Shades (Blue)</h3><p class="text-sm text-stone-600">The mark of a cool-headed trader who never lets emotions influence their decisions.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/3RIQ7rC.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Shades (Green)</h3><p class="text-sm text-stone-600">These shades are permanently tuned to see one thing: green candles on the chart.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/yMt6YLJ.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Laser Eyes</h3><p class="text-sm text-stone-600">A sacred symbol of unwavering belief in a decentralized future. These ducks are true maxis at heart.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/dVDdj9l.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">MLG Pro Shades</h3><p class="text-sm text-stone-600">Worn by the elite GameFi strategists who dominate the leaderboards and earn legendary rewards.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/5gcAoNh.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Visor (Green)</h3><p class="text-sm text-stone-600">A heads-up display showing promising new projects and ecosystem growth metrics.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/SWg2WqM.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Visor (Yellow)</h3><p class="text-sm text-stone-600">This visor helps its wearer to spot brilliant, innovative ideas in a sea of noise.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/mSDeZ7E.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Visor (Blue)</h3><p class="text-sm text-stone-600">Tuned to analyze smart contracts and on-chain data, this visor is for the technical deep-divers.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/txsBbs4.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Visor (Purple)</h3><p class="text-sm text-stone-600">A tool for artists and creators, helping them visualize and mint their next masterpiece on the blockchain.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/A1kCNKS.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Visor (Rainbow)</h3><p class="text-sm text-stone-600">Allows the wearer to see the full spectrum of possibilities in web3, embracing all chains and communities.</p></div></div>
+                </div>
+            </div>
+
+            <!-- Armaments Content -->
+            <div id="armaments" class="tab-content">
+                <h2 class="book-title text-3xl sm:text-4xl text-center text-amber-900 mb-6">Chapter V: Armaments</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[55vh] overflow-y-auto pr-2 custom-scrollbar">
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/2UnxvdK.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Ruby Blade (Rock)</h3><p class="text-sm text-stone-600">An ancient weapon of brute force, said to be able to shatter any FUD with a single swing.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/xsFA9Mg.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Sapphire Shear (Scissors)</h3><p class="text-sm text-stone-600">A blade of pure precision, used to cut through convoluted smart contracts and expose their true nature.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/DQ3kjfI.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Emerald Leaf (Paper)</h3><p class="text-sm text-stone-600">A tool of diplomacy and strategy, able to envelop opponents in unbeatable proposals and documentation.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/Bpxiqfc.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Ascendant Wings</h3><p class="text-sm text-stone-600">A magical artifact gifted to ducks who perform a great service for the Sanctuary, allowing them to rise above the flock.</p></div></div>
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex items-center gap-4 border border-stone-300"><img src="https://i.imgur.com/hHs5OUb.png" class="w-20 h-20 rounded-md"><div><h3 class="font-bold text-lg text-amber-900">Duckling Companion</h3><p class="text-sm text-stone-600">A sign of mentorship. Ducks with a companion have taken a newcomer under their wing to teach them the ways of the Sanctuary.</p></div></div>
+                </div>
+            </div>
+
+            <!-- Legends Content -->
+            <div id="legends" class="tab-content">
+                 <div class="flex flex-col items-center justify-center h-full text-center">
+                    <h2 class="book-title text-5xl sm-text-6xl font-bold text-red-800">The Legends</h2>
+                    <div class="w-32 h-px bg-red-800/20 my-8"></div>
+                    <p class="text-stone-700 text-lg max-w-xl mx-auto leading-loose italic">
+                       From the deepest vaults of the Sanctuary, a whisper...
+                    </p>
+                     <p class="text-stone-600 mt-4 text-base max-w-xl mx-auto leading-loose">
+                        Three signatures, each unlike any other, are recorded in the great ledger. Their stories are the foundation upon which the Sanctuary was built. These are the 1-of-1s. And then there is one... that is purely legend.
                     </p>
                 </div>
-            </div>
-
-            <!-- Page 13: The Mandarin Duck -->
-            <div class="page hidden" data-page="12">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div class="aspect-square bg-stone-200 rounded-lg overflow-hidden border-4 border-amber-800/50 p-1 shadow-inner">
-                        <img id="nft-image-1" src="https://i.imgur.com/wrP5ymE.png"
-                             onerror="this.onerror=null;this.src='https://placehold.co/600x600/cccccc/ffffff?text=Image+Not+Found';"
-                             alt="NFT Artwork: The Mandarin Duck" class="w-full h-full object-cover rounded-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <!-- The OG Duck -->
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex flex-col items-center gap-4 border-2 border-yellow-500">
+                        <img src="https://i.imgur.com/pcn60EC.png" class="w-48 h-48 rounded-md flex-shrink-0 border-2 border-yellow-400">
+                        <div class="text-center">
+                            <h3 class="book-title text-2xl font-bold text-yellow-800">The OG Duck</h3>
+                            <p class="text-sm text-yellow-700 mb-2 font-semibold">#??? - THE SYMBOL</p>
+                            <p class="text-sm text-stone-600 leading-relaxed">The primordial duck. The OG is an icon so foundational to the Sanctuary's spirit that it exists outside the bounds of the blockchain. He cannot be owned or traded because he is an idea—a pure symbol of the decentralized future and the promise of all that is to come. His image is a reminder that the community's soul is more powerful than any token ID.</p>
+                        </div>
                     </div>
-                    <div class="story-content">
-                        <h2 class="story-title text-3xl font-bold text-amber-800 mb-4">The Mandarin Duck</h2>
-                        <p class="text-base leading-relaxed text-stone-700">
-                            Said to have emerged from an enchanted scroll, the Mandarin Duck is a living work of art. Its plumage, painted with the impossible colors of twilight and dawn, was a gift from a mystical painter who wished to capture pure serenity. This duck doesn't swim in water, but glides through the tranquil streams of the Solana blockchain, bringing harmony and calm to all who behold it. It is a symbol of beauty and elegance in a world of chaotic code.
-                        </p>
+                    <!-- Mandarin Duck -->
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex flex-col items-center gap-4 border-2 border-amber-400">
+                        <img src="https://i.imgur.com/wrP5ymE.png" class="w-48 h-48 rounded-md flex-shrink-0 border-2 border-amber-300">
+                        <div class="text-center">
+                            <h3 class="book-title text-2xl font-bold text-amber-900">The Mandarin</h3>
+                            <p class="text-sm text-amber-700 mb-2 font-semibold">#001 - THE ARTIST</p>
+                            <p class="text-sm text-stone-600 leading-relaxed">The genesis of all beauty in the collection, The Mandarin is a living masterpiece held safely in the community treasury. It is not owned by one, but cherished by all. Its vibrant feathers, woven from the raw creative energy of the blockchain, are said to inspire the entire flock. Artists claim its presence can cure creative block, making it the Sanctuary's most precious cultural asset.</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Page 14: The BullDuck -->
-            <div class="page hidden" data-page="13">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div class="aspect-square bg-stone-200 rounded-lg overflow-hidden border-4 border-amber-800/50 p-1 shadow-inner">
-                        <img id="nft-image-2" src="https://i.imgur.com/FqUe7KS.png"
-                             onerror="this.onerror=null;this.src='https://placehold.co/600x600/cccccc/ffffff?text=Image+Not+Found';"
-                             alt="NFT Artwork: The BullDuck" class="w-full h-full object-cover rounded-sm">
+                    <!-- The BullDuck -->
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex flex-col items-center gap-4 border-2 border-red-500">
+                        <img src="https://i.imgur.com/FqUe7KS.png" class="w-48 h-48 rounded-md flex-shrink-0 border-2 border-red-400">
+                        <div class="text-center">
+                            <h3 class="book-title text-2xl font-bold text-red-900">The BullDuck</h3>
+                            <p class="text-sm text-red-700 mb-2 font-semibold">#002 - THE TITAN</p>
+                            <p class="text-sm text-stone-600 leading-relaxed">Born in the fires of a legendary market surge, this unstoppable force is a reward for unwavering conviction. The BullDuck is destined to be held by the most bullish and steadfast investors, a trophy signifying their faith. Legends say its roar can rally a floor price from the brink of collapse, making its holder a revered oracle of prosperity and the sworn protector of the Sanctuary's treasury.</p>
+                        </div>
                     </div>
-                    <div class="story-content">
-                        <h2 class="story-title text-3xl font-bold text-amber-800 mb-4">The BullDuck</h2>
-                        <p class="text-base leading-relaxed text-stone-700">
-                            Forged not of feather but of raw, untamed energy, the BullDuck is the indomitable spirit of the digital frontier. With horns that crackle with market volatility and a stare that could intimidate a bear market, it guards the most daring projects on the chain. It is a legendary creature, spoken of in whispers by traders and builders alike—a powerful omen of strength, resilience, and the relentless drive to push forward, no matter the obstacle.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page 15: The Duck Hunter -->
-            <div class="page hidden" data-page="14">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div class="aspect-square bg-stone-200 rounded-lg overflow-hidden border-4 border-amber-800/50 p-1 shadow-inner">
-                        <img id="nft-image-3" src="https://i.imgur.com/OdtiPGK.png"
-                             onerror="this.onerror=null;this.src='https://placehold.co/600x600/cccccc/ffffff?text=Image+Not+Found';"
-                             alt="NFT Artwork: The Duck Hunter" class="w-full h-full object-cover rounded-sm">
-                    </div>
-                    <div class="story-content">
-                        <h2 class="story-title text-3xl font-bold text-amber-800 mb-4">The Duck Hunter</h2>
-                        <p class="text-base leading-relaxed text-stone-700">
-                            This is no ordinary hunter, but a seeker of rare, digital treasures. With a hat woven from discarded code and a gaze fixed on the horizon of the metaverse, the Duck Hunter travels the untrodden paths of the blockchain. It doesn't hunt creatures, but rather elusive glitches, forgotten tokens, and legendary smart contracts. A rugged explorer and a master of its domain, it represents the thrill of discovery and the adventurous spirit required to find true gems in the vast digital wilderness.
-                        </p>
+                    <!-- The Duck Hunter -->
+                    <div class="bg-stone-50/50 p-4 rounded-lg flex flex-col items-center gap-4 border-2 border-stone-500">
+                        <img src="https://i.imgur.com/OdtiPGK.png" class="w-48 h-48 rounded-md flex-shrink-0 border-2 border-stone-400">
+                        <div class="text-center">
+                            <h3 class="book-title text-2xl font-bold text-stone-800">The Hunter</h3>
+                            <p class="text-sm text-stone-600 mb-2 font-semibold">#003 - THE SEEKER</p>
+                            <p class="text-sm text-stone-600 leading-relaxed">A silent predator of the open market, The Hunter cannot be tamed or owned. He is the ultimate treasure seeker, a wild anomaly that stalks the marketplace floor, hunting for undervalued and forgotten ducks. His rifle fires not bullets, but swift, decisive bids, sweeping the rarest finds into his legendary collection. He appears when a treasure is revealed and vanishes once his prize is secured, a guardian of value that answers only to the thrill of the hunt.</p>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
-
-        <!-- Navigation -->
-        <footer class="mt-8 pt-6 border-t border-amber-800/30 flex justify-between items-center">
-            <button id="prev-button" class="px-6 py-2 bg-amber-800 text-stone-100 font-semibold rounded-lg shadow-md hover:bg-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-75 disabled:bg-amber-950 disabled:text-stone-400 disabled:cursor-not-allowed transition-colors">
-                Previous
-            </button>
-            <div id="page-indicator" class="text-sm text-stone-500">
-                Page <span id="current-page-number">1</span> of <span id="total-pages">15</span>
-            </div>
-            <button id="next-button" class="px-6 py-2 bg-amber-800 text-stone-100 font-semibold rounded-lg shadow-md hover:bg-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-75 disabled:bg-amber-950 disabled:text-stone-400 disabled:cursor-not-allowed transition-colors">
-                Next
-            </button>
-        </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Element selections
-            const prevButton = document.getElementById('prev-button');
-            const nextButton = document.getElementById('next-button');
-            const pages = document.querySelectorAll('.page');
-            const currentPageNumberEl = document.getElementById('current-page-number');
-            const totalPagesEl = document.getElementById('total-pages');
+            const tabs = document.querySelectorAll('.tab-button');
+            const contents = document.querySelectorAll('.tab-content');
 
-            // State management
-            let currentPageIndex = 0;
-            const totalPages = pages.length;
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Get target id from data attribute
+                    const targetId = tab.dataset.target;
+                    const targetContent = document.getElementById(targetId);
 
-            // Initialize total pages display
-            totalPagesEl.textContent = totalPages;
+                    // Deactivate all tabs and hide all content
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
 
-            /**
-             * Shows a specific page by its index and updates navigation controls.
-             * @param {number} pageIndex - The index of the page to show.
-             */
-            function showPage(pageIndex) {
-                // Hide all pages first
-                pages.forEach((page, index) => {
-                    if (index === pageIndex) {
-                        page.classList.remove('hidden');
-                    } else {
-                        page.classList.add('hidden');
+                    // Activate clicked tab and show its content
+                    tab.classList.add('active');
+                    if(targetContent) {
+                       targetContent.classList.add('active');
                     }
                 });
-
-                // Update the current page number in the UI
-                currentPageNumberEl.textContent = pageIndex + 1;
-
-                // Update button states
-                prevButton.disabled = pageIndex === 0;
-                nextButton.disabled = pageIndex === totalPages - 1;
-            }
-
-            // Event Listeners for navigation
-            nextButton.addEventListener('click', () => {
-                if (currentPageIndex < totalPages - 1) {
-                    currentPageIndex++;
-                    showPage(currentPageIndex);
-                }
             });
-
-            prevButton.addEventListener('click', () => {
-                if (currentPageIndex > 0) {
-                    currentPageIndex--;
-                    showPage(currentPageIndex);
-                }
-            });
-
-            // Initial setup: show the first page
-            showPage(currentPageIndex);
         });
     </script>
 </body>
 </html>
+
+
+
 
 
 
