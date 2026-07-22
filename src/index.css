@@ -2,7 +2,7 @@
 
 body {
   font-family: 'Marcellus', serif;
-  background-image: url('https://i.imgur.com/G26c2iA.jpeg');
+  background: radial-gradient(circle, #231b15 0%, #0f0c0a 100%);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

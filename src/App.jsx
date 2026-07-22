@@ -42,7 +42,7 @@ export default function App() {
 
                 <nav className="flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-x-visible">
                   <button
-                    className={`tab-button w-full text-left p-3.5 rounded-lg text-base font-serif transition-all flex items-center gap-2.5 border-l-4 ${
+                    className={`tab-button w-full text-left p-3.5 rounded-lg text-base font-serif transition-all flex items-center gap-2.5 border-l-4 cursor-pointer ${
                       activeTab === "home"
                         ? "bg-[#ece3cf] text-[#a0522d] border-[#a0522d] translate-x-0.5"
                         : "text-[#5a3d36] hover:bg-[#ece3cf]/60 hover:text-[#a0522d] border-transparent"
@@ -54,7 +54,7 @@ export default function App() {
                   </button>
 
                   <button
-                    className={`tab-button w-full text-left p-3.5 rounded-lg text-base font-serif transition-all flex items-center gap-2.5 border-l-4 ${
+                    className={`tab-button w-full text-left p-3.5 rounded-lg text-base font-serif transition-all flex items-center gap-2.5 border-l-4 cursor-pointer ${
                       activeTab === "explorer"
                         ? "bg-[#ece3cf] text-[#a0522d] border-[#a0522d] translate-x-0.5"
                         : "text-[#5a3d36] hover:bg-[#ece3cf]/60 hover:text-[#a0522d] border-transparent"
@@ -66,7 +66,7 @@ export default function App() {
                   </button>
 
                   <button
-                    className={`tab-button w-full text-left p-3.5 rounded-lg text-base font-serif transition-all flex items-center gap-2.5 border-l-4 ${
+                    className={`tab-button w-full text-left p-3.5 rounded-lg text-base font-serif transition-all flex items-center gap-2.5 border-l-4 cursor-pointer ${
                       activeTab === "my-ducks"
                         ? "bg-[#ece3cf] text-[#a0522d] border-[#a0522d] translate-x-0.5"
                         : "text-[#5a3d36] hover:bg-[#ece3cf]/60 hover:text-[#a0522d] border-transparent"
@@ -89,7 +89,7 @@ export default function App() {
             <div className="content-container flex-grow p-4 md:p-8 overflow-y-auto">
               
               {/* Home Page */}
-              {activeTab === "home" && (
+              <div className={activeTab === "home" ? "block" : "hidden"}>
                 <div className="flex flex-col items-center justify-center min-h-[450px] text-center">
                   <img
                     src="https://i.imgur.com/pcn60EC.png"
@@ -109,25 +109,29 @@ export default function App() {
                   <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
                     <button
                       onClick={() => setActiveTab("explorer")}
-                      className="px-8 py-3 bg-[#a0522d] text-stone-100 font-serif font-bold rounded-lg shadow-md hover:bg-amber-900 transition-all transform hover:scale-105"
+                      className="px-8 py-3 bg-[#a0522d] text-stone-100 font-serif font-bold rounded-lg shadow-md hover:bg-amber-900 transition-all transform hover:scale-105 cursor-pointer"
                     >
                       Browse Lore Explorer
                     </button>
                     <button
                       onClick={() => setActiveTab("my-ducks")}
-                      className="px-8 py-3 bg-white border border-stone-300 text-[#a0522d] font-serif font-bold rounded-lg shadow-md hover:bg-stone-50 transition-all transform hover:scale-105"
+                      className="px-8 py-3 bg-white border border-stone-300 text-[#a0522d] font-serif font-bold rounded-lg shadow-md hover:bg-stone-50 transition-all transform hover:scale-105 cursor-pointer"
                     >
                       Enter My Sanctuary
                     </button>
                   </div>
                 </div>
-              )}
+              </div>
 
               {/* Lore Explorer Page */}
-              {activeTab === "explorer" && <LoreExplorer />}
+              <div className={activeTab === "explorer" ? "block" : "hidden"}>
+                <LoreExplorer />
+              </div>
 
               {/* My Ducks Page */}
-              {activeTab === "my-ducks" && <MyDucks />}
+              <div className={activeTab === "my-ducks" ? "block" : "hidden"}>
+                <MyDucks />
+              </div>
 
             </div>
           </div>
