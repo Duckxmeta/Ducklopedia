@@ -193,7 +193,7 @@ export default function LoreExplorer() {
 
             <div className="mt-4 pt-3 border-t border-stone-250 flex items-center justify-center gap-1.5 text-amber-900/60 font-serif text-xs">
               <Star className="w-3.5 h-3.5 fill-current" />
-              <span>Decent Ducks Chronicles</span>
+              <span>Decent Ducks</span>
               <Star className="w-3.5 h-3.5 fill-current" />
             </div>
           </div>

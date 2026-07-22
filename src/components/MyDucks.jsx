@@ -280,7 +280,7 @@ export default function MyDucks() {
                       onClick={() => setSelectedTrait(null)}
                       className="text-xs px-2.5 py-1 bg-amber-800 text-stone-100 rounded hover:bg-amber-900 transition-all font-sans font-medium w-fit cursor-pointer"
                     >
-                      ← Back to Chronicle
+                      ← Back to Duck View
                     </button>
                   </div>
                   <p className="mt-1.5 text-stone-850 leading-relaxed text-sm">
@@ -309,10 +309,10 @@ export default function MyDucks() {
                     <div className="space-y-4">
                       <div className="border-b border-stone-200 pb-2">
                         <h4 className="font-bold text-amber-950 text-xl font-serif">
-                          The Chronicle of {selectedDuck.name}
+                          {selectedDuck.name}
                         </h4>
                         <p className="text-[11px] text-stone-500 font-sans mt-0.5">
-                          Assembled from {matchedLore.length} distinct matching traits. Click any highlighted trait pill above to isolate its history.
+                          Matching traits: {matchedLore.length}. Click any highlighted trait pill above to isolate its backstory.
                         </p>
                       </div>
                       <div className="space-y-4 leading-relaxed text-stone-850">
@@ -336,7 +336,7 @@ export default function MyDucks() {
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center text-stone-400">
             <BookOpen className="w-16 h-16 opacity-30 mb-4" />
-            <p className="font-serif text-lg italic">Select a duck from the nest to load its chronicles.</p>
+            <p className="font-serif text-lg italic">Select a duck from the nest to load its details.</p>
           </div>
         )}
 

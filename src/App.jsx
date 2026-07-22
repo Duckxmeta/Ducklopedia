@@ -100,10 +100,10 @@ export default function App() {
                     The Ducklopedia
                   </h2>
                   <p className="text-stone-700 mt-3 text-lg font-serif italic">
-                    A living chronicle of lore from the Decent Ducks Sanctuary.
+                    A living record of lore from the Decent Ducks Sanctuary.
                   </p>
                   <p className="text-stone-850 mt-8 text-lg max-w-xl mx-auto leading-relaxed font-serif font-semibold">
-                    Every duck carries a history woven from its traits. Explore the database of backstories or connect your Solana wallet to unlock the chronicles of your own flock.
+                    Every duck carries a history woven from its traits. Explore the database of backstories or connect your Solana wallet to unlock the details of your own flock.
                   </p>
                   
                   <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
