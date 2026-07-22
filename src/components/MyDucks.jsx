@@ -4,6 +4,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import useUserDucks from "../hooks/useUserDucks";
 import { getLoreForTrait, DEFAULT_LORE } from "../data/lore";
 import { CONFIG } from "../config";
+import { renderSafeLore } from "../utils/text";
 import { BookOpen, ShieldAlert, Sparkles, Wallet, Award } from "lucide-react";
 
 export default function MyDucks() {
@@ -244,12 +245,9 @@ export default function MyDucks() {
                       ← Back to Chronicle
                     </button>
                   </div>
-                  <p 
-                    className="mt-1.5 text-stone-850 leading-relaxed text-sm"
-                    dangerouslySetInnerHTML={{
-                      __html: getLoreForTrait(selectedTrait.trait_type, selectedTrait.value)?.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    }}
-                  />
+                  <p className="mt-1.5 text-stone-850 leading-relaxed text-sm">
+                    {renderSafeLore(getLoreForTrait(selectedTrait.trait_type, selectedTrait.value))}
+                  </p>
                 </div>
               ) : (
                 // 2. Render Full Chronicle (combined paragraphs of matching traits)
@@ -285,12 +283,9 @@ export default function MyDucks() {
                             <h5 className="font-bold text-amber-900 text-xs tracking-wider uppercase mb-1">
                               {item.attr.trait_type}: <span className="text-stone-850 capitalize font-sans">{item.attr.value}</span>
                             </h5>
-                            <p 
-                              className="text-sm leading-relaxed"
-                              dangerouslySetInnerHTML={{
-                                __html: item.lore.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                              }}
-                            />
+                            <p className="text-sm leading-relaxed">
+                              {renderSafeLore(item.lore)}
+                            </p>
                           </div>
                         ))}
                       </div>

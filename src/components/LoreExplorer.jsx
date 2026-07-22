@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { getAllCategories } from "../data/lore";
+import { renderSafeLore } from "../utils/text";
 import { Compass, Book, ArrowRight, Star } from "lucide-react";
 
 // Image mapping helper matching the assets used in index.html
@@ -185,12 +186,9 @@ export default function LoreExplorer() {
             </div>
 
             <div className="flex-grow overflow-y-auto max-h-[260px] pr-2">
-              <p 
-                className="font-serif text-stone-850 leading-relaxed text-base italic"
-                dangerouslySetInnerHTML={{
-                  __html: selectedTrait.description.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                }}
-              />
+              <p className="font-serif text-stone-850 leading-relaxed text-base italic">
+                {renderSafeLore(selectedTrait.description)}
+              </p>
             </div>
 
             <div className="mt-4 pt-3 border-t border-stone-250 flex items-center justify-center gap-1.5 text-amber-900/60 font-serif text-xs">
