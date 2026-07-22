@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import useUserDucks from "../hooks/useUserDucks";
-import { getLoreForTrait, DEFAULT_LORE, getLegendLore } from "../data/lore";
+import { getLoreForTrait, DEFAULT_LORE, getLegendLore, getBackgroundDetails } from "../data/lore";
 import { CONFIG } from "../config";
 import { renderSafeLore } from "../utils/text";
 import { CATEGORY_ALIASES, DISPLAY_CATEGORIES } from "../data/traitAliases";
@@ -179,11 +179,11 @@ export default function MyDucks() {
                   e.target.src = "https://i.imgur.com/pcn60EC.png";
                 }}
               />
-              <div className="text-center sm:text-left min-w-0">
+              <div className="text-center sm:text-left min-w-0 flex-grow">
                 <h2 className="font-serif text-3xl font-bold text-amber-950 leading-tight">
                   {selectedDuck.name}
                 </h2>
-                <div className="flex flex-wrap justify-center sm:justify-start gap-1.5 mt-3">
+                <div className="flex flex-wrap justify-center sm:justify-start gap-1.5 mt-2.5">
                   {selectedDuck.attributes?.map((attr, idx) => {
                     const hasLore = getLoreForTrait(attr.trait_type, attr.value);
                     const isSelected = selectedTrait && 
@@ -209,6 +209,28 @@ export default function MyDucks() {
                     );
                   })}
                 </div>
+                
+                {/* Realm Environment Tone Badge */}
+                {(() => {
+                  const bgAttr = selectedDuck.attributes?.find(
+                    (attr) => String(attr?.trait_type || '').toLowerCase() === "background"
+                  );
+                  const bgDetails = bgAttr ? getBackgroundDetails(bgAttr.value) : null;
+                  if (!bgDetails) return null;
+                  return (
+                    <div className="mt-3.5 p-3 bg-amber-50/70 border border-amber-900/15 rounded-lg flex items-start gap-2.5 shadow-sm text-left">
+                      <Sparkles className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+                      <div className="min-w-0">
+                        <p className="text-xs font-serif font-bold text-amber-950">
+                          Environment Tone: <span className="underline decoration-amber-900/20">{bgDetails.title}</span> ({bgDetails.theme})
+                        </p>
+                        <p className="text-[11px] text-stone-600 mt-1 leading-relaxed italic font-serif">
+                          "{bgDetails.lore}"
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 

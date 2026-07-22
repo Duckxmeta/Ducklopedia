@@ -1,12 +1,32 @@
 {
-  "Orange Background": "The warm glow of dawn. An orange sky inspires hope and high energy, reflecting a duck that is always eager to embark on new ventures and push the boundaries of the Sanctuary.",
-  "Blue Background": "The calm of the deep sea. A blue sky represents tranquility, focus, and stability, signifying a duck that is cool-headed, dependable, and a stable pillar of the community.",
-  "Green Background": "The vitality of the fertile wild. A green backdrop symbolises growth, wealth, and connection to nature, characteristic of a duck that is always building and helping others grow.",
-  "Red Background": "The fire of passion and determination. A red sky represents intense energy, action, and courage, matching a duck that is fearless in the face of challenges and market dips.",
-  "Yellow Background": "The brightness of the midday sun. A yellow backdrop represents optimism, joy, and clear intellect, typical of a duck that brings cheer and creative solutions to the flock.",
-  "Purple Background": "The mystery of the cosmic twilight. A purple sky represents royalty, imagination, and wisdom, fitting a duck that is visionary, artistic, and deeply intuitive.",
-  "Pink Background": "The playfulness of cotton candy. A pink backdrop signifies lightheartedness, friendship, and positive vibes, representing a duck that fosters community warmth and harmony.",
-  "Grey Background": "The quiet focus of the morning mist. A grey backdrop represents neutrality, balance, and quiet wisdom, ideal for a duck that acts as a fair judge and mediator within the flock.",
-  "Black Background": "The depth of the void. A black background represents power, mystery, and elegance, matching a duck that moves silently, possesses hidden talents, and guards the Sanctuary's secrets.",
-  "White Background": "The clarity of a clean slate. A white backdrop symbolises purity, truth, and infinite potential, characteristic of a duck that is open-minded, honest, and ready for any adventure."
+  "Green": {
+    "title": "Green Realm",
+    "theme": "Nature, Vitality & Growth",
+    "lore": "Rooted in the lush foliage of the Sanctuary, ducks hailing from the Green realm are infused with raw vitality and natural growth. They are the caretakers of the wetlands, bound to the rhythm of life and ever-renewing energy."
+  },
+  "Blue": {
+    "title": "Blue Waters",
+    "theme": "Calmness, Trust & Stability",
+    "lore": "Born amidst tranquil open waters, ducks against the Blue backdrop carry a serene, unflappable demeanor. They represent steady leadership, deep mutual trust, and the unwavering stability that holds the flock together during chaotic tides."
+  },
+  "Yellow": {
+    "title": "Yellow Radiance",
+    "theme": "Sunshine, Warmth & Optimism",
+    "lore": "Basking in eternal golden sunlight, those from the Yellow realm embody pure joy and infectious optimism. Their presence brings warmth to the nest, lifting spirits and reminding the Sanctuary of brighter tomorrows."
+  },
+  "Orange": {
+    "title": "Orange Flare",
+    "theme": "Energy, Enthusiasm & Creativity",
+    "lore": "Ignited by a vibrant burst of creative fire, Orange ducks radiate boundless energy and enthusiastic spirit. They are the spark plug of the Sanctuary—innovators and bold visionaries who turn wild ideas into reality."
+  },
+  "Purple": {
+    "title": "Purple Domain",
+    "theme": "Royalty, Wisdom & Spirituality",
+    "lore": "Shrouded in royal mist and ancient wisdom, the Purple background marks ducks of rare spiritual depth and noble standing. They act as the Sanctuary's sages and guardians of sacred avian lore."
+  },
+  "Red": {
+    "title": "Red Pulse",
+    "theme": "Energy, Passion & Urgency",
+    "lore": "Driven by a fierce and burning heart, Red background ducks are propelled by raw passion and decisive urgency. They thrive on intensity, taking immediate action whenever the Sanctuary faces a sudden challenge."
+  }
 }

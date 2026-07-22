@@ -93,6 +93,26 @@ export function getLegendLore(name, attributes) {
  * @param {string} traitValue - e.g. "White (Pekin)", "Blue Hoodie", etc.
  * @returns {string|null} Lore description or null if not found
  */
+/**
+ * Helper to fetch structured background details (title, theme, lore) for a color name.
+ */
+export function getBackgroundDetails(color) {
+  if (!color) return null;
+  const cleanColor = normalizeTraitName(color).replace(/\bbackgrounds?\b/g, "").trim();
+  const db = LORE_DATABASE["Background"];
+  const matchedKey = Object.keys(db).find(
+    (key) => String(key).toLowerCase() === cleanColor
+  );
+  return matchedKey ? db[matchedKey] : null;
+}
+
+/**
+ * Normalises category and trait keys and returns the corresponding lore paragraph.
+ * 
+ * @param {string} category - e.g. "Feather", "Attire", "Headwear", etc.
+ * @param {string} traitValue - e.g. "White (Pekin)", "Blue Hoodie", etc.
+ * @returns {string|null} Lore description or null if not found
+ */
 export function getLoreForTrait(category, traitValue) {
   if (category === undefined || category === null || traitValue === undefined || traitValue === null) return null;
 
@@ -102,6 +122,14 @@ export function getLoreForTrait(category, traitValue) {
 
   const catLower = catStr.toLowerCase().trim();
   const valLower = valStr.toLowerCase().trim();
+
+  // Helper to ensure we return a string even if the database has a structured object
+  const resolveLoreString = (val) => {
+    if (val && typeof val === "object") {
+      return val.lore || "";
+    }
+    return val;
+  };
 
   // A. Check SOLANA_TRAIT_MAP mapping lookup first (hidden translation)
   const mapKey = `${catLower}:${valLower}`;
@@ -114,7 +142,7 @@ export function getLoreForTrait(category, traitValue) {
       const matchKey = Object.keys(categoryDb).find(
         (key) => String(key).toLowerCase() === String(mappedValue).toLowerCase()
       );
-      if (matchKey) return categoryDb[matchKey];
+      if (matchKey) return resolveLoreString(categoryDb[matchKey]);
     }
   }
 
@@ -127,17 +155,19 @@ export function getLoreForTrait(category, traitValue) {
 
   // 2. Perform normalized value matching (handle typos, suffixes, background words)
   let normVal = normalizeTraitName(valStr);
-  if (mappedCategory === "Background" && !normVal.includes("background")) {
-    normVal = `${normVal} background`;
+  if (mappedCategory === "Background") {
+    normVal = normVal.replace(/\bbackgrounds?\b/g, "").trim();
   }
 
   // 3. Prioritized lookup sequence within primary category:
   
-  // A. Exact Match
-  const exactKey = Object.keys(categoryDb).find(
-    (key) => String(key).toLowerCase() === valLower
-  );
-  if (exactKey) return categoryDb[exactKey];
+  // A. Exact Match (with background cleaning if necessary)
+  const exactKey = Object.keys(categoryDb).find((key) => {
+    const keyLower = String(key).toLowerCase();
+    const cleanValLower = mappedCategory === "Background" ? valLower.replace(/\bbackgrounds?\b/g, "").trim() : valLower;
+    return keyLower === cleanValLower || keyLower.replace(/\bbackgrounds?\b/g, "").trim() === cleanValLower;
+  });
+  if (exactKey) return resolveLoreString(categoryDb[exactKey]);
 
   // B. Trait Alias check
   const aliasedName = TRAIT_ALIASES[valLower];
@@ -145,21 +175,21 @@ export function getLoreForTrait(category, traitValue) {
     const aliasKey = Object.keys(categoryDb).find(
       (key) => String(key).toLowerCase() === aliasedName.toLowerCase()
     );
-    if (aliasKey) return categoryDb[aliasKey];
+    if (aliasKey) return resolveLoreString(categoryDb[aliasKey]);
   }
 
   // C. Normalize and Check
   const normKey = Object.keys(categoryDb).find(
     (key) => normalizeTraitName(key) === normVal
   );
-  if (normKey) return categoryDb[normKey];
+  if (normKey) return resolveLoreString(categoryDb[normKey]);
 
   // D. Fuzzy/Substring Match
   const fuzzyKey = Object.keys(categoryDb).find((key) => {
-    const keyNorm = normalizeTraitName(key);
+    const keyNorm = normalizeTraitName(key).replace(/\bbackgrounds?\b/g, "").trim();
     return keyNorm.includes(normVal) || normVal.includes(keyNorm);
   });
-  if (fuzzyKey) return categoryDb[fuzzyKey];
+  if (fuzzyKey) return resolveLoreString(categoryDb[fuzzyKey]);
 
   // 4. Cross-Category / Global Fallback Lookup:
   // If no match is found under primary category, search across ALL other databases!
@@ -171,24 +201,24 @@ export function getLoreForTrait(category, traitValue) {
     const crossExact = Object.keys(db).find(
       (key) => String(key).toLowerCase() === valLower
     );
-    if (crossExact) return db[crossExact];
+    if (crossExact) return resolveLoreString(db[crossExact]);
 
     // Check normalized match
     let crossNormVal = normVal;
-    if (catName === "Background" && !crossNormVal.includes("background")) {
-      crossNormVal = `${crossNormVal} background`;
+    if (catName === "Background") {
+      crossNormVal = crossNormVal.replace(/\bbackgrounds?\b/g, "").trim();
     }
     const crossNormKey = Object.keys(db).find(
       (key) => normalizeTraitName(key) === crossNormVal
     );
-    if (crossNormKey) return db[crossNormKey];
+    if (crossNormKey) return resolveLoreString(db[crossNormKey]);
 
     // Check fuzzy match
     const crossFuzzyKey = Object.keys(db).find((key) => {
-      const keyNorm = normalizeTraitName(key);
+      const keyNorm = normalizeTraitName(key).replace(/\bbackgrounds?\b/g, "").trim();
       return keyNorm.includes(crossNormVal) || crossNormVal.includes(keyNorm);
     });
-    if (crossFuzzyKey) return db[crossFuzzyKey];
+    if (crossFuzzyKey) return resolveLoreString(db[crossFuzzyKey]);
   }
 
   return null;
