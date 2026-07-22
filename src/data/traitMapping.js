@@ -60,3 +60,16 @@ export const SOLANA_TRAIT_MAP = {
   "eyewear:purple viser": { category: "Eyewear", loreKey: "Purple Visor" },
   "eyewear:rainbow viser": { category: "Eyewear", loreKey: "Rainbow Visor" }
 };
+
+export const BODY_FEATHER_MAP = {
+  "white duck": "White (Pekin)",
+  "grey duck": "Grey (Ugly Duck)",
+  "green duck": "Green (Mallard)",
+  "gold duck": "Gold (Buff)",
+  "black duck": "Black (Runner)",
+  "white": "White (Pekin)",
+  "grey": "Grey (Ugly Duck)",
+  "green": "Green (Mallard)",
+  "gold": "Gold (Buff)",
+  "black": "Black (Runner)"
+};

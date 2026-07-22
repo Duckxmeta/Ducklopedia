@@ -6,7 +6,7 @@ import eyewear from "./eyewear.json";
 import legends from "./legends.json";
 import backgrounds from "./backgrounds.json";
 import { CATEGORY_ALIASES, TRAIT_ALIASES } from "../traitAliases";
-import { SOLANA_TRAIT_MAP } from "../traitMapping";
+import { SOLANA_TRAIT_MAP, BODY_FEATHER_MAP } from "../traitMapping";
 
 // Map of standard category names to their imported database files
 export const LORE_DATABASE = {
@@ -152,6 +152,17 @@ export function getLoreForTrait(category, traitValue) {
     
   if (!mappedCategory) return null;
   const categoryDb = LORE_DATABASE[mappedCategory];
+
+  // B. Body-to-Feather Breed Mapping Check
+  if (mappedCategory === "Feather") {
+    const breedName = BODY_FEATHER_MAP[valLower];
+    if (breedName) {
+      const breedKey = Object.keys(categoryDb).find(
+        (key) => String(key).toLowerCase() === breedName.toLowerCase()
+      );
+      if (breedKey) return resolveLoreString(categoryDb[breedKey]);
+    }
+  }
 
   // 2. Perform normalized value matching (handle typos, suffixes, background words)
   let normVal = normalizeTraitName(valStr);
