@@ -133,3 +133,10 @@ export const normalizeEyewearName = (rawTrait) => {
 
   return EYEWEAR_ALIASES[cleaned] || cleaned;
 };
+
+export const HEADWEAR_MAP = {
+  "upside bucket": "Bucket Hat",
+  "upside down bucket": "Bucket Hat",
+  "upside-down bucket": "Bucket Hat",
+  "bucket hat": "Bucket Hat"
+};

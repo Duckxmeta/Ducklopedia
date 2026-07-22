@@ -6,7 +6,7 @@ import eyewear from "./eyewear.json";
 import legends from "./legends.json";
 import backgrounds from "./backgrounds.json";
 import { CATEGORY_ALIASES, TRAIT_ALIASES } from "../traitAliases";
-import { SOLANA_TRAIT_MAP, BODY_FEATHER_MAP, EYE_TRAIT_MAP, EYEWEAR_MAP, ATTIRE_MAP, normalizeEyewearName } from "../traitMapping";
+import { SOLANA_TRAIT_MAP, BODY_FEATHER_MAP, EYE_TRAIT_MAP, EYEWEAR_MAP, ATTIRE_MAP, normalizeEyewearName, HEADWEAR_MAP } from "../traitMapping";
 
 // Map of standard category names to their imported database files
 export const LORE_DATABASE = {
@@ -152,6 +152,17 @@ export function getLoreForTrait(category, traitValue) {
     
   if (!mappedCategory) return null;
   const categoryDb = LORE_DATABASE[mappedCategory];
+
+  // E. Headwear Mapping Check
+  if (mappedCategory === "Headwear") {
+    const headwearAlias = HEADWEAR_MAP[valLower];
+    if (headwearAlias) {
+      const headwearKey = Object.keys(categoryDb).find(
+        (key) => String(key).toLowerCase() === headwearAlias.toLowerCase()
+      );
+      if (headwearKey) return resolveLoreString(categoryDb[headwearKey]);
+    }
+  }
 
   // D. Attire Mapping Check
   if (mappedCategory === "Attire") {
