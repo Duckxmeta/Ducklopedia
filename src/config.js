@@ -3,7 +3,7 @@
 export const CONFIG = {
   // If you use Helius or Quicknode, put your custom RPC URL here.
   // Using public RPC endpoints might be rate-limited.
-  rpcUrl: "https://api.mainnet-beta.solana.com",
+  rpcUrl: import.meta.env.VITE_SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
 
   // Collection Mint or Creator Address to filter NFTs.
   // Set this to your Solana NFT Collection Creator or Update Authority address.

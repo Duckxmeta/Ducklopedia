@@ -105,3 +105,33 @@ body {
     font-size: 2.5rem;
   }
 }
+
+/* High-Contrast Readability Overrides */
+.content-container p,
+.content-container span:not([class*="bg-amber"]),
+.content-container .text-stone-600,
+.content-container .text-stone-750,
+.content-container .text-stone-700,
+.content-container .text-stone-800,
+.content-container .text-stone-850 {
+  color: #111827 !important; /* High contrast charcoal */
+}
+
+.content-container h2,
+.content-container h3,
+.content-container h4,
+.content-container .book-title {
+  color: #000000 !important; /* Rich pure black for all headings */
+}
+
+/* Keep original wood border theme color for titles but in high contrast */
+.trait-card h3 {
+  color: #5c2c16 !important; 
+}
+
+/* Ensure bold text inside lore paragraphs stands out clearly */
+.content-container strong {
+  color: #000000 !important;
+  font-weight: 800 !important;
+}
+
