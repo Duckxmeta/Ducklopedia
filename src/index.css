@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+body {
+  font-family: 'Marcellus', serif;
+  background-image: url('https://i.imgur.com/G26c2iA.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.book-container {
+  max-width: 1200px;
+  height: 90vh;
+  max-height: 800px;
+  background-color: #fdf6e3; /* Parchment color */
+  border: 3px solid #6b4f4b; /* Dark wood border */
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.2);
+}
+
+.tabs-container {
+  border-right: 2px solid #d3c8b2; /* Parchment spine */
+}
+
+.tab-button {
+  font-family: 'IM Fell English', serif;
+  color: #5a3d36;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.content-container {
+  background-color: rgba(253, 246, 227, 0.7); /* Slightly transparent parchment */
+}
+
+.book-title {
+  font-family: 'IM Fell English', serif;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+.trait-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.trait-card {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid #d3c8b2;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.trait-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.trait-card img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin: 0 auto 1rem;
+}
+
+.trait-card h3 {
+  font-family: 'IM Fell English', serif;
+  color: #6b4f4b;
+}
+
+/* Custom styles to override wallet button text to match font theme */
+.wallet-adapter-button {
+  font-family: 'IM Fell English', serif !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .book-container {
+    flex-direction: column;
+    height: auto;
+    max-height: none;
+  }
+  .tabs-container {
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 2px solid #d3c8b2;
+    white-space: nowrap;
+    width: 100%;
+  }
+  .tab-button {
+    padding: 0.75rem 1rem;
+    border-left: none !important;
+    border-bottom: 4px solid transparent;
+  }
+  .content-container {
+    padding: 1rem;
+  }
+  .book-title {
+    font-size: 2.5rem;
+  }
+}
