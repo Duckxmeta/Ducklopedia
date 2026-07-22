@@ -173,20 +173,19 @@ export async function fetchWalletNfts(walletAddress, onProgress) {
  */
 export async function fetchWalletNftsDas(walletAddress) {
   try {
-    const response = await fetch(CONFIG.rpcUrl, {
+    // 1. Attempt searchAssets filtering directly for the collection
+    let response = await fetch(CONFIG.rpcUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         jsonrpc: "2.0",
-        id: "ducklopedia-query",
-        method: "getAssetsByOwner",
+        id: "get-ducks-search",
+        method: "searchAssets",
         params: {
           ownerAddress: walletAddress,
+          grouping: ["collection", CONFIG.collectionCreatorAddress],
           page: 1,
           limit: 1000,
-          displayOptions: {
-            showCollectionMetadata: true,
-          },
         },
       }),
     });
@@ -195,31 +194,55 @@ export async function fetchWalletNftsDas(walletAddress) {
       throw new Error(`HTTP error ${response.status}`);
     }
 
-    const { result } = await response.json();
-    if (!result || !result.items) {
-      throw new Error("No items returned from DAS API");
+    let data = await response.json();
+    let items = data.result?.items || [];
+
+    // 2. Fallback to getAssetsByOwner if searchAssets returned no items
+    if (items.length === 0) {
+      console.log("searchAssets returned 0 items. Falling back to getAssetsByOwner...");
+      response = await fetch(CONFIG.rpcUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: "get-ducks-all",
+          method: "getAssetsByOwner",
+          params: {
+            ownerAddress: walletAddress,
+            page: 1,
+            limit: 1000,
+            displayOptions: {
+              showCollectionMetadata: true,
+            },
+          },
+        }),
+      });
+
+      if (response.ok) {
+        const allData = await response.json();
+        const allItems = allData.result?.items || [];
+
+        // Filter all items by collection address or name matching
+        items = allItems.filter((item) => {
+          const isCorrectCollection = item.grouping?.some(
+            (group) => group.group_value === CONFIG.collectionCreatorAddress
+          );
+          const isDuckName = item.content?.metadata?.name?.toLowerCase().includes("decent duck");
+          return isCorrectCollection || isDuckName;
+        });
+      }
     }
 
-    // Filter and map to our standard format
-    return result.items
-      .filter((item) => {
-        // Filter by collection address if defined
-        const isCorrectCollection = item.grouping?.some(
-          (group) => group.group_value === CONFIG.collectionCreatorAddress
-        );
-        const isDuckName = item.content?.metadata?.name?.toLowerCase().includes("decent duck");
-        
-        return isCorrectCollection || isDuckName;
-      })
-      .map((item) => ({
-        mint: item.id,
-        name: item.content?.metadata?.name || "Decent Duck",
-        image: item.content?.files?.[0]?.uri || item.content?.links?.image,
-        attributes: item.content?.metadata?.attributes?.map((attr) => ({
-          trait_type: attr.trait_type || attr.name,
-          value: attr.value,
-        })) || [],
-      }));
+    // Map the items to our standard format
+    return items.map((item) => ({
+      mint: item.id,
+      name: item.content?.metadata?.name || "Decent Duck",
+      image: item.content?.files?.[0]?.uri || item.content?.links?.image,
+      attributes: item.content?.metadata?.attributes?.map((attr) => ({
+        trait_type: attr.trait_type || attr.name,
+        value: attr.value,
+      })) || [],
+    }));
   } catch (error) {
     console.error("DAS API Fetch failed, falling back to Web3.js:", error);
     // Return null to signify that we should try the fallback Web3.js method

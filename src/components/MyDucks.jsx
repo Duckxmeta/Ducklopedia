@@ -95,21 +95,21 @@ export default function MyDucks() {
         ) : error || ducks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <ShieldAlert className="w-12 h-12 text-amber-800/40 mb-3" />
-            <p className="text-stone-700 font-bold mb-2">No Decent Ducks Found</p>
-            <p className="text-stone-500 text-sm max-w-xs leading-relaxed mb-4">
-              We couldn't detect any ducks from creator:
-              <code className="block bg-stone-150 text-[10px] p-1.5 rounded mt-1.5 select-all overflow-x-auto">
-                {CONFIG.collectionCreatorAddress}
+            <p className="text-stone-850 font-serif font-bold text-lg mb-1">No Ducks Found</p>
+            <p className="text-stone-700 text-sm max-w-xs leading-relaxed mb-4">
+              We couldn't detect any Decent Ducks in this wallet. Make sure you hold tokens from the collection:
+              <code className="block bg-stone-200/60 text-[10px] font-mono py-1 px-2 rounded mt-2 select-all overflow-x-auto text-stone-800">
+                {CONFIG.collectionCreatorAddress.slice(0, 10)}...{CONFIG.collectionCreatorAddress.slice(-10)}
               </code>
             </p>
             {error && (
-              <p className="text-red-700 text-xs font-mono mb-4 px-2 max-w-xs">
+              <p className="text-red-800 text-xs font-mono mb-4 px-2 max-w-xs bg-red-50 py-1.5 rounded border border-red-200">
                 Error: {error}
               </p>
             )}
             <button
               onClick={() => setIsDemoMode(true)}
-              className="px-5 py-2 bg-amber-800 text-stone-100 font-serif rounded-lg shadow-md hover:bg-amber-900 transition-all text-sm"
+              className="px-6 py-2 bg-amber-800 text-stone-100 font-serif font-bold rounded-lg shadow-md hover:bg-amber-900 transition-all text-sm"
             >
               Reveal Demo Ducks
             </button>
