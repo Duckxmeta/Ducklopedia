@@ -102,7 +102,10 @@ export const EYEWEAR_MAP = {
 export const ATTIRE_MAP = {
   "black chef": "Apprentice Chef",
   "black chef outfit": "Apprentice Chef",
-  "apprentice chef": "Apprentice Chef"
+  "apprentice chef": "Apprentice Chef",
+  "white chef": "Head Chef",
+  "white chef outfit": "Head Chef",
+  "head chef": "Head Chef"
 };
 
 export const normalizeEyewearName = (rawTrait) => {
