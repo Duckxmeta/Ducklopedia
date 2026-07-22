@@ -138,5 +138,9 @@ export const HEADWEAR_MAP = {
   "upside bucket": "Bucket Hat",
   "upside down bucket": "Bucket Hat",
   "upside-down bucket": "Bucket Hat",
-  "bucket hat": "Bucket Hat"
+  "bucket hat": "Bucket Hat",
+  "brown tophat": "Brown Top Hat",
+  "brown top hat": "Brown Top Hat",
+  "black tophat": "Black Top Hat",
+  "black top hat": "Black Top Hat"
 };

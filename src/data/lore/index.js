@@ -27,8 +27,9 @@ export const DEFAULT_LORE = "A mysterious duck from the Decent Ducks Sanctuary. 
  */
 export function normalizeTraitName(str) {
   if (!str) return "";
-  return String(str)
-    .toLowerCase()
+  let cleanStr = String(str).toLowerCase();
+  cleanStr = cleanStr.replace(/tophat/gi, 'top hat');
+  return cleanStr
     .trim()
     .replace(/\bbackwards\b/g, "backward")
     .replace(/\bhats\b/g, "hat")
