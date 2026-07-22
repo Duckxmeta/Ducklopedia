@@ -93,3 +93,8 @@ export const EYE_TRAIT_MAP = {
   "green viser": "Eyes 4",
   "black goggles": "Eyes 5"
 };
+
+export const EYEWEAR_MAP = {
+  "mlg glasses": "MLG Shades",
+  "mlg shades": "MLG Shades"
+};
