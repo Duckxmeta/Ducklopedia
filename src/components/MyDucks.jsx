@@ -44,6 +44,16 @@ export default function MyDucks() {
     return null;
   };
 
+  // Fallback description for items without custom trait lore (e.g. V2 eggs)
+  const getFallbackLore = (duck) => {
+    if (!duck) return DEFAULT_LORE;
+    const nameLower = duck.name?.toLowerCase() || "";
+    if (nameLower.includes("egg")) {
+      return "An unhatched Decent Ducks egg. Lore coming soon!";
+    }
+    return DEFAULT_LORE;
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-6 min-h-[500px]">
       {/* Left Column: Your Sanctuary Flock */}
@@ -223,8 +233,8 @@ export default function MyDucks() {
                     selectedDuck.attributes.filter((attr) =>
                       getLoreForTrait(attr.trait_type, attr.value)
                     ).length === 0) && (
-                    <div className="py-8 text-center text-stone-500 italic">
-                      {DEFAULT_LORE}
+                    <div className="py-8 text-center text-stone-550 italic">
+                      {getFallbackLore(selectedDuck)}
                     </div>
                   )}
                 </>

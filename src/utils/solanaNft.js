@@ -1,5 +1,5 @@
 import { Connection, PublicKey } from "@solana/web3.js";
-import { CONFIG } from "../config";
+import { CONFIG, TARGET_COLLECTIONS } from "../config";
 
 const METAPLEX_PROGRAM_ID = new PublicKey("metaqbxxSkz4wpzBLWcttkecK3c726rHzQVWJDk56qp");
 const TOKEN_PROGRAM_ID = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
@@ -145,7 +145,7 @@ export async function fetchWalletNfts(walletAddress, onProgress) {
       // B. By checking the name (fallback)
       const creators = json.properties?.creators || json.creators || [];
       const hasVerifiedCreator = creators.some(
-        (creator) => creator.address === CONFIG.collectionCreatorAddress
+        (creator) => TARGET_COLLECTIONS.includes(creator.address)
       );
       
       const nameMatch = candidate.name.toLowerCase().includes("decent duck");
@@ -173,34 +173,41 @@ export async function fetchWalletNfts(walletAddress, onProgress) {
  */
 export async function fetchWalletNftsDas(walletAddress) {
   try {
-    // 1. Attempt searchAssets filtering directly for the collection
-    let response = await fetch(CONFIG.rpcUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: "get-ducks-search",
-        method: "searchAssets",
-        params: {
-          ownerAddress: walletAddress,
-          grouping: ["collection", CONFIG.collectionCreatorAddress],
-          page: 1,
-          limit: 1000,
-        },
-      }),
+    // 1. Attempt searchAssets filtering directly for each target collection address in parallel
+    const searchPromises = TARGET_COLLECTIONS.map(async (collectionAddress) => {
+      try {
+        const response = await fetch(CONFIG.rpcUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: `get-ducks-search-${collectionAddress.slice(0, 8)}`,
+            method: "searchAssets",
+            params: {
+              ownerAddress: walletAddress,
+              grouping: ["collection", collectionAddress],
+              page: 1,
+              limit: 1000,
+            },
+          }),
+        });
+
+        if (!response.ok) return [];
+        const data = await response.json();
+        return data.result?.items || [];
+      } catch (err) {
+        console.warn(`searchAssets failed for collection ${collectionAddress}:`, err);
+        return [];
+      }
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
-    }
-
-    let data = await response.json();
-    let items = data.result?.items || [];
+    const searchResults = await Promise.all(searchPromises);
+    let items = searchResults.flat();
 
     // 2. Fallback to getAssetsByOwner if searchAssets returned no items
     if (items.length === 0) {
       console.log("searchAssets returned 0 items. Falling back to getAssetsByOwner...");
-      response = await fetch(CONFIG.rpcUrl, {
+      const response = await fetch(CONFIG.rpcUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -225,7 +232,7 @@ export async function fetchWalletNftsDas(walletAddress) {
         // Filter all items by collection address or name matching
         items = allItems.filter((item) => {
           const isCorrectCollection = item.grouping?.some(
-            (group) => group.group_value === CONFIG.collectionCreatorAddress
+            (group) => TARGET_COLLECTIONS.includes(group.group_value)
           );
           const isDuckName = item.content?.metadata?.name?.toLowerCase().includes("decent duck");
           return isCorrectCollection || isDuckName;
@@ -233,8 +240,18 @@ export async function fetchWalletNftsDas(walletAddress) {
       }
     }
 
+    // Deduplicate items by mint address
+    const seen = new Set();
+    const uniqueItems = [];
+    for (const item of items) {
+      if (!seen.has(item.id)) {
+        seen.add(item.id);
+        uniqueItems.push(item);
+      }
+    }
+
     // Map the items to our standard format
-    return items.map((item) => ({
+    return uniqueItems.map((item) => ({
       mint: item.id,
       name: item.content?.metadata?.name || "Decent Duck",
       image: item.content?.files?.[0]?.uri || item.content?.links?.image,

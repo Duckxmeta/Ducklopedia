@@ -1,6 +1,12 @@
 // Solana Web3 configuration and Mock Data
 
-export const COLLECTION_ADDRESS = import.meta.env.VITE_COLLECTION_ADDRESS || "DeENhPTFgyQrvkpRyBCe4KBei2diFMDn19fVLJPZqS2";
+export const V1_COLLECTION_ADDRESS = "4GnPjn35vjYWeBAQ1N9TYPgkRhueXEXf1diS6EzTMkMN";
+export const V2_COLLECTION_ADDRESS = import.meta.env.VITE_COLLECTION_ADDRESS || "DeENhPTFgyQrvkpRyBCe4KBei2diFMDn19fVLJPZqS2";
+
+export const TARGET_COLLECTIONS = [
+  V1_COLLECTION_ADDRESS,
+  V2_COLLECTION_ADDRESS
+].filter(Boolean);
 
 export const CONFIG = {
   // If you use Helius or Quicknode, put your custom RPC URL here.
@@ -9,7 +15,7 @@ export const CONFIG = {
 
   // Collection Mint or Creator Address to filter NFTs.
   // Set this to your Solana NFT Collection Creator or Update Authority address.
-  collectionCreatorAddress: COLLECTION_ADDRESS,
+  collectionCreatorAddress: V2_COLLECTION_ADDRESS,
 
   // Set to true to bypass RPC fetching and always use Mock Data (great for testing/dev)
   useMockDataAlways: false,
