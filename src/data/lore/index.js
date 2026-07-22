@@ -5,6 +5,36 @@ import accessories from "./accessories.json";
 import eyewear from "./eyewear.json";
 import legends from "./legends.json";
 
+// Alias mapping for flexible trait classification in on-chain metadata
+export const CATEGORY_MAP = {
+  body: "Feather",
+  skin: "Feather",
+  feathers: "Feather",
+  feather: "Feather",
+  
+  attire: "Attire",
+  clothes: "Attire",
+  clothing: "Attire",
+  shirt: "Attire",
+  
+  headwear: "Headwear",
+  hat: "Headwear",
+  hats: "Headwear",
+  
+  accessories: "Accessories",
+  accessory: "Accessories",
+  backpack: "Accessories",
+  weapon: "Accessories",
+  
+  eyewear: "Eyewear",
+  eyes: "Eyewear",
+  glasses: "Eyewear",
+  shades: "Eyewear",
+  
+  legend: "Legend",
+  legends: "Legend"
+};
+
 // Map of standard category names to their imported database files
 export const LORE_DATABASE = {
   Feather: feathers,
@@ -28,20 +58,45 @@ export const DEFAULT_LORE = "A mysterious duck from the Decent Ducks Sanctuary. 
 export function getLoreForTrait(category, traitValue) {
   if (!category || !traitValue) return null;
 
-  // 1. Normalise category key case-insensitively
-  const matchedCategoryKey = Object.keys(LORE_DATABASE).find(
-    (key) => key.toLowerCase() === category.toLowerCase()
+  const catLower = category.toLowerCase().trim();
+  const valLower = traitValue.toLowerCase().trim();
+
+  // 1. Resolve normalized category via maps or search
+  const mappedCategory = CATEGORY_MAP[catLower] || 
+    Object.keys(LORE_DATABASE).find(key => key.toLowerCase() === catLower);
+    
+  if (!mappedCategory) return null;
+  const categoryDb = LORE_DATABASE[mappedCategory];
+
+  // 2. Perform exact matching first
+  const exactKey = Object.keys(categoryDb).find(
+    (key) => key.toLowerCase() === valLower
   );
-  if (!matchedCategoryKey) return null;
+  if (exactKey) return categoryDb[exactKey];
 
-  const categoryDb = LORE_DATABASE[matchedCategoryKey];
+  // 3. Perform normalized value matching (handle typos and suffixes)
+  let normalizedVal = valLower
+    .replace(/\bviser\b/g, "visor")
+    .replace(/\bhoody\b/g, "hoodie");
 
-  // 2. Normalise trait value case-insensitively
-  const matchedValueKey = Object.keys(categoryDb).find(
-    (key) => key.toLowerCase() === traitValue.toLowerCase()
+  // Clean common trailing descriptors for fuzzy comparison
+  if (mappedCategory === "Feather") {
+    normalizedVal = normalizedVal.replace(/\bduck\b/g, "").trim();
+  }
+
+  // Exact check on normalized string
+  const normExactKey = Object.keys(categoryDb).find(
+    (key) => key.toLowerCase() === normalizedVal
   );
+  if (normExactKey) return categoryDb[normExactKey];
 
-  return matchedValueKey ? categoryDb[matchedValueKey] : null;
+  // 4. Perform fuzzy/substring matching
+  const fuzzyKey = Object.keys(categoryDb).find((key) => {
+    const keyLower = key.toLowerCase();
+    return keyLower.includes(normalizedVal) || normalizedVal.includes(keyLower);
+  });
+
+  return fuzzyKey ? categoryDb[fuzzyKey] : null;
 }
 
 /**

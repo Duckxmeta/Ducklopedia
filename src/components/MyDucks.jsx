@@ -9,6 +9,7 @@ import { BookOpen, ShieldAlert, Sparkles, Wallet, Award } from "lucide-react";
 export default function MyDucks() {
   const { publicKey, connected } = useWallet();
   const [selectedDuck, setSelectedDuck] = useState(null);
+  const [selectedTrait, setSelectedTrait] = useState(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
 
   // Derive wallet address string
@@ -21,8 +22,10 @@ export default function MyDucks() {
   useEffect(() => {
     if (ducks.length > 0) {
       setSelectedDuck(ducks[0]);
+      setSelectedTrait(null);
     } else {
       setSelectedDuck(null);
+      setSelectedTrait(null);
     }
   }, [ducks]);
 
@@ -131,7 +134,10 @@ export default function MyDucks() {
               return (
                 <button
                   key={duck.mint}
-                  onClick={() => setSelectedDuck(duck)}
+                  onClick={() => {
+                    setSelectedDuck(duck);
+                    setSelectedTrait(null);
+                  }}
                   className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${
                     isSelected
                       ? "bg-amber-105 border-amber-800 shadow-sm"
@@ -185,14 +191,29 @@ export default function MyDucks() {
                   {selectedDuck.name}
                 </h2>
                 <div className="flex flex-wrap justify-center sm:justify-start gap-1.5 mt-3">
-                  {selectedDuck.attributes?.map((attr, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2.5 py-0.5 bg-amber-900/15 text-amber-950 border border-amber-900/20 text-xs rounded-full font-serif font-semibold"
-                    >
-                      {attr.trait_type}: {attr.value}
-                    </span>
-                  ))}
+                  {selectedDuck.attributes?.map((attr, idx) => {
+                    const hasLore = getLoreForTrait(attr.trait_type, attr.value);
+                    const isSelected = selectedTrait && 
+                                       selectedTrait.trait_type === attr.trait_type && 
+                                       selectedTrait.value === attr.value;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedTrait(isSelected ? null : attr)}
+                        className={`px-2.5 py-0.5 text-xs rounded-full font-serif font-semibold border transition-all ${
+                          isSelected
+                            ? "bg-amber-900 text-stone-100 border-amber-950 shadow-sm"
+                            : hasLore
+                            ? "bg-amber-900/10 text-amber-950 border-amber-900/25 hover:bg-amber-900/20 cursor-pointer"
+                            : "bg-stone-200/50 text-stone-600 border-stone-300/40 opacity-70 cursor-not-allowed"
+                        }`}
+                        title={hasLore ? "Click to view trait backstory" : "No lore written for this trait yet"}
+                        disabled={!hasLore}
+                      >
+                        {attr.trait_type}: {attr.value} {!hasLore && " (No Lore)"}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -209,35 +230,73 @@ export default function MyDucks() {
                     {getLegendLore(selectedDuck)}
                   </p>
                 </div>
+              ) : selectedTrait ? (
+                // 1. Render single trait backstory details
+                <div className="p-4 bg-amber-100/30 border border-amber-800/20 rounded-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-amber-900/10 pb-2 mb-3 gap-2">
+                    <h4 className="font-bold text-amber-950 text-base uppercase tracking-wider">
+                      Trait Backstory: {selectedTrait.trait_type} ({selectedTrait.value})
+                    </h4>
+                    <button
+                      onClick={() => setSelectedTrait(null)}
+                      className="text-xs px-2.5 py-1 bg-amber-800 text-stone-100 rounded hover:bg-amber-900 transition-all font-sans font-medium w-fit cursor-pointer"
+                    >
+                      ← Back to Chronicle
+                    </button>
+                  </div>
+                  <p 
+                    className="mt-1.5 text-stone-850 leading-relaxed text-sm"
+                    dangerouslySetInnerHTML={{
+                      __html: getLoreForTrait(selectedTrait.trait_type, selectedTrait.value)?.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    }}
+                  />
+                </div>
               ) : (
-                <>
-                  {selectedDuck.attributes?.map((attr, idx) => {
-                    const lore = getLoreForTrait(attr.trait_type, attr.value);
-                    if (!lore) return null;
+                // 2. Render Full Chronicle (combined paragraphs of matching traits)
+                (() => {
+                  const matchedLore = selectedDuck.attributes
+                    ?.map((attr) => ({
+                      attr,
+                      lore: getLoreForTrait(attr.trait_type, attr.value),
+                    }))
+                    .filter((item) => item.lore) || [];
+
+                  if (matchedLore.length === 0) {
                     return (
-                      <div key={idx} className="p-3 bg-stone-100/80 border border-stone-200 rounded-lg hover:border-amber-900/20 transition-all">
-                        <h4 className="font-bold text-amber-900 text-sm tracking-wider uppercase">
-                          {attr.trait_type}: <span className="text-stone-850 capitalize">{attr.value}</span>
-                        </h4>
-                        <p 
-                          className="mt-1.5 text-stone-700 leading-relaxed text-sm"
-                          dangerouslySetInnerHTML={{
-                            __html: lore.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                          }}
-                        />
+                      <div className="py-8 text-center text-stone-550 italic">
+                        {getFallbackLore(selectedDuck)}
                       </div>
                     );
-                  })}
-                  {/* Fallback if no matching trait lore exists */}
-                  {(!selectedDuck.attributes ||
-                    selectedDuck.attributes.filter((attr) =>
-                      getLoreForTrait(attr.trait_type, attr.value)
-                    ).length === 0) && (
-                    <div className="py-8 text-center text-stone-550 italic">
-                      {getFallbackLore(selectedDuck)}
+                  }
+
+                  return (
+                    <div className="space-y-4">
+                      <div className="border-b border-stone-200 pb-2">
+                        <h4 className="font-bold text-amber-950 text-xl font-serif">
+                          The Chronicle of {selectedDuck.name}
+                        </h4>
+                        <p className="text-[11px] text-stone-500 font-sans mt-0.5">
+                          Assembled from {matchedLore.length} distinct matching traits. Click any highlighted trait pill above to isolate its history.
+                        </p>
+                      </div>
+                      <div className="space-y-4 leading-relaxed text-stone-850">
+                        {matchedLore.map((item, idx) => (
+                          <div key={idx} className="p-3 bg-stone-100/50 border border-stone-200 rounded-lg hover:border-amber-900/15 transition-all">
+                            <h5 className="font-bold text-amber-900 text-xs tracking-wider uppercase mb-1">
+                              {item.attr.trait_type}: <span className="text-stone-850 capitalize font-sans">{item.attr.value}</span>
+                            </h5>
+                            <p 
+                              className="text-sm leading-relaxed"
+                              dangerouslySetInnerHTML={{
+                                __html: item.lore.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  )}
-                </>
+                  );
+                })()
               )}
             </div>
           </div>
