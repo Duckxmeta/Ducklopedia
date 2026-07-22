@@ -6,7 +6,7 @@ import { getLoreForTrait, DEFAULT_LORE, getLegendLore, getBackgroundDetails } fr
 import { CONFIG } from "../config";
 import { renderSafeLore } from "../utils/text";
 import { CATEGORY_ALIASES, DISPLAY_CATEGORIES } from "../data/traitAliases";
-import { BODY_FEATHER_MAP, EYE_TRAIT_MAP, EYEWEAR_MAP } from "../data/traitMapping";
+import { BODY_FEATHER_MAP, EYE_TRAIT_MAP, EYEWEAR_MAP, ATTIRE_MAP } from "../data/traitMapping";
 import { BookOpen, ShieldAlert, Sparkles, Wallet, Award } from "lucide-react";
 
 export default function MyDucks() {
@@ -60,6 +60,9 @@ export default function MyDucks() {
     }
     if (tLower === "eyes" || tLower === "eyewear" || tLower === "glasses" || tLower === "shades") {
       return EYEWEAR_MAP[valLower] || EYE_TRAIT_MAP[valLower] || val;
+    }
+    if (tLower === "clothing" || tLower === "clothes" || tLower === "attire" || tLower === "shirt") {
+      return ATTIRE_MAP[valLower] || val;
     }
     return val;
   };

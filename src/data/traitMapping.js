@@ -98,3 +98,9 @@ export const EYEWEAR_MAP = {
   "mlg glasses": "MLG Shades",
   "mlg shades": "MLG Shades"
 };
+
+export const ATTIRE_MAP = {
+  "black chef": "Apprentice Chef",
+  "black chef outfit": "Apprentice Chef",
+  "apprentice chef": "Apprentice Chef"
+};
