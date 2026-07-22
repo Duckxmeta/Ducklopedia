@@ -148,14 +148,22 @@ export async function fetchWalletNfts(walletAddress, onProgress) {
         (creator) => TARGET_COLLECTIONS.includes(creator.address)
       );
       
-      const nameMatch = candidate.name.toLowerCase().includes("decent duck");
+      const nameMatch = String(candidate.name || "").toLowerCase().includes("decent duck");
 
       if (hasVerifiedCreator || nameMatch) {
+        const rawAttrs = json.attributes;
+        const attributes = Array.isArray(rawAttrs)
+          ? rawAttrs.map((attr) => ({
+              trait_type: String(attr.trait_type || attr.name || ""),
+              value: String(attr.value || ""),
+            }))
+          : [];
+
         verifiedNfts.push({
-          mint: candidate.mint,
-          name: candidate.name,
-          image: json.image,
-          attributes: json.attributes || [],
+          mint: String(candidate.mint || ""),
+          name: String(candidate.name || "Decent Duck"),
+          image: String(json.image || ""),
+          attributes,
         });
       }
     } catch (e) {
@@ -234,7 +242,7 @@ export async function fetchWalletNftsDas(walletAddress) {
           const isCorrectCollection = item.grouping?.some(
             (group) => TARGET_COLLECTIONS.includes(group.group_value)
           );
-          const isDuckName = item.content?.metadata?.name?.toLowerCase().includes("decent duck");
+          const isDuckName = String(item.content?.metadata?.name || "").toLowerCase().includes("decent duck");
           return isCorrectCollection || isDuckName;
         });
       }
@@ -251,15 +259,22 @@ export async function fetchWalletNftsDas(walletAddress) {
     }
 
     // Map the items to our standard format
-    return uniqueItems.map((item) => ({
-      mint: item.id,
-      name: item.content?.metadata?.name || "Decent Duck",
-      image: item.content?.files?.[0]?.uri || item.content?.links?.image,
-      attributes: item.content?.metadata?.attributes?.map((attr) => ({
-        trait_type: attr.trait_type || attr.name,
-        value: attr.value,
-      })) || [],
-    }));
+    return uniqueItems.map((item) => {
+      const rawAttrs = item.content?.metadata?.attributes;
+      const attributes = Array.isArray(rawAttrs)
+        ? rawAttrs.map((attr) => ({
+            trait_type: String(attr.trait_type || attr.name || ""),
+            value: String(attr.value || ""),
+          }))
+        : [];
+
+      return {
+        mint: String(item.id || ""),
+        name: String(item.content?.metadata?.name || "Decent Duck"),
+        image: String(item.content?.files?.[0]?.uri || item.content?.links?.image || ""),
+        attributes,
+      };
+    });
   } catch (error) {
     console.error("DAS API Fetch failed, falling back to Web3.js:", error);
     // Return null to signify that we should try the fallback Web3.js method

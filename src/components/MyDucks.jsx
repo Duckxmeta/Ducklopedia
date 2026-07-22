@@ -39,7 +39,7 @@ export default function MyDucks() {
   // Helper to check if a duck has a Legend trait
   const getLegendLore = (duck) => {
     const legendAttr = duck.attributes?.find(
-      (attr) => attr.trait_type?.toLowerCase() === "legend"
+      (attr) => String(attr?.trait_type || '').toLowerCase() === "legend"
     );
     if (legendAttr) {
       return getLoreForTrait("Legend", legendAttr.value);
@@ -50,7 +50,7 @@ export default function MyDucks() {
   // Fallback description for items without custom trait lore (e.g. V2 eggs)
   const getFallbackLore = (duck) => {
     if (!duck) return DEFAULT_LORE;
-    const nameLower = duck.name?.toLowerCase() || "";
+    const nameLower = String(duck.name || '').toLowerCase();
     if (nameLower.includes("egg")) {
       return "An unhatched Decent Ducks egg. Lore coming soon!";
     }

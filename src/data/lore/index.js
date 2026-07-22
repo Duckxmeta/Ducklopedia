@@ -56,21 +56,25 @@ export const DEFAULT_LORE = "A mysterious duck from the Decent Ducks Sanctuary. 
  * @returns {string|null} Lore description or null if not found
  */
 export function getLoreForTrait(category, traitValue) {
-  if (!category || !traitValue) return null;
+  if (category === undefined || category === null || traitValue === undefined || traitValue === null) return null;
 
-  const catLower = category.toLowerCase().trim();
-  const valLower = traitValue.toLowerCase().trim();
+  // Safe string conversion
+  const catStr = String(category);
+  const valStr = String(traitValue);
+
+  const catLower = catStr.toLowerCase().trim();
+  const valLower = valStr.toLowerCase().trim();
 
   // 1. Resolve normalized category via maps or search
   const mappedCategory = CATEGORY_MAP[catLower] || 
-    Object.keys(LORE_DATABASE).find(key => key.toLowerCase() === catLower);
+    Object.keys(LORE_DATABASE).find(key => String(key).toLowerCase() === catLower);
     
   if (!mappedCategory) return null;
   const categoryDb = LORE_DATABASE[mappedCategory];
 
   // 2. Perform exact matching first
   const exactKey = Object.keys(categoryDb).find(
-    (key) => key.toLowerCase() === valLower
+    (key) => String(key).toLowerCase() === valLower
   );
   if (exactKey) return categoryDb[exactKey];
 
@@ -86,13 +90,13 @@ export function getLoreForTrait(category, traitValue) {
 
   // Exact check on normalized string
   const normExactKey = Object.keys(categoryDb).find(
-    (key) => key.toLowerCase() === normalizedVal
+    (key) => String(key).toLowerCase() === normalizedVal
   );
   if (normExactKey) return categoryDb[normExactKey];
 
   // 4. Perform fuzzy/substring matching
   const fuzzyKey = Object.keys(categoryDb).find((key) => {
-    const keyLower = key.toLowerCase();
+    const keyLower = String(key).toLowerCase();
     return keyLower.includes(normalizedVal) || normalizedVal.includes(keyLower);
   });
 
