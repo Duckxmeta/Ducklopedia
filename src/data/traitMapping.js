@@ -104,3 +104,29 @@ export const ATTIRE_MAP = {
   "black chef outfit": "Apprentice Chef",
   "apprentice chef": "Apprentice Chef"
 };
+
+export const normalizeEyewearName = (rawTrait) => {
+  if (!rawTrait) return "";
+  const rawLower = String(rawTrait).toLowerCase().trim();
+
+  // Specific alias mappings:
+  const EYEWEAR_ALIASES = {
+    "black shades": "Black Shades",
+    "black glasses": "Black Shades",
+    "black glasses 2": "Black Shades",
+    "green shades": "Green Shades",
+    "green glasses": "Green Shades",
+    "green glasses 2": "Green Shades"
+  };
+
+  if (EYEWEAR_ALIASES[rawLower]) {
+    return EYEWEAR_ALIASES[rawLower];
+  }
+
+  let cleaned = rawLower
+    .replace(/\b(1|2|3)\b/g, '') // Strip trailing numbers 1, 2, 3
+    .replace(/glasses/g, 'shades') // Replace Glasses with Shades
+    .trim();
+
+  return EYEWEAR_ALIASES[cleaned] || cleaned;
+};
