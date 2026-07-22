@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import useUserDucks from "../hooks/useUserDucks";
-import { getLoreForTrait, DEFAULT_LORE } from "../data/lore";
+import { getLoreForTrait, DEFAULT_LORE, getLegendLore } from "../data/lore";
 import { CONFIG } from "../config";
 import { renderSafeLore } from "../utils/text";
 import { CATEGORY_ALIASES } from "../data/traitAliases";
@@ -38,16 +38,7 @@ export default function MyDucks() {
     }
   }, [connected]);
 
-  // Helper to check if a duck has a Legend trait
-  const getLegendLore = (duck) => {
-    const legendAttr = duck.attributes?.find(
-      (attr) => String(attr?.trait_type || '').toLowerCase() === "legend"
-    );
-    if (legendAttr) {
-      return getLoreForTrait("Legend", legendAttr.value);
-    }
-    return null;
-  };
+
 
   // Fallback description for items without custom trait lore (e.g. V2 eggs)
   const getFallbackLore = (duck) => {
@@ -224,13 +215,13 @@ export default function MyDucks() {
             {/* Custom Lore Sections */}
             <div className="space-y-4 max-h-[380px] overflow-y-auto pr-2 font-serif text-stone-850">
               {/* Check for Legend First */}
-              {getLegendLore(selectedDuck) ? (
+              {getLegendLore(selectedDuck.name, selectedDuck.attributes) ? (
                 <div className="p-4 bg-amber-100/50 border border-amber-800/30 rounded-lg">
                   <h4 className="font-bold text-amber-950 text-lg border-b border-amber-900/10 pb-1 mb-2 flex items-center gap-1.5">
                     <Award className="w-5 h-5 text-amber-800" /> Legendary Tale
                   </h4>
                   <p className="leading-relaxed italic">
-                    {getLegendLore(selectedDuck)}
+                    {getLegendLore(selectedDuck.name, selectedDuck.attributes)}
                   </p>
                 </div>
               ) : selectedTrait ? (

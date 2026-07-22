@@ -5,6 +5,7 @@ import accessories from "./accessories.json";
 import eyewear from "./eyewear.json";
 import legends from "./legends.json";
 import { CATEGORY_ALIASES, TRAIT_ALIASES } from "../traitAliases";
+import { SOLANA_TRAIT_MAP } from "../traitMapping";
 
 // Map of standard category names to their imported database files
 export const LORE_DATABASE = {
@@ -40,6 +41,50 @@ export function normalizeTraitName(str) {
 }
 
 /**
+ * Resolves 1/1 legend lore by scanning the duck name or attributes against the Legend database.
+ */
+export function getLegendLore(name, attributes) {
+  const nameStr = String(name || "").toLowerCase();
+  
+  // 1. Check if the attributes specify a Legend trait value
+  if (Array.isArray(attributes)) {
+    const legendAttr = attributes.find(
+      a => String(a.trait_type || '').toLowerCase() === "legend" || 
+           String(a.trait_type || '').toLowerCase() === "1/1" ||
+           String(a.value || '').toLowerCase() === "1/1"
+    );
+    if (legendAttr && legendAttr.value && String(legendAttr.value).toLowerCase() !== "1/1") {
+      const match = getLoreForTrait("Legend", legendAttr.value);
+      if (match) return match;
+    }
+  }
+
+  // 2. Scan name for any direct key in legends.json
+  const legendsDb = LORE_DATABASE["Legend"];
+  const matchedKey = Object.keys(legendsDb).find(key => {
+    const keyLower = String(key).toLowerCase();
+    // E.g. name "Decent Duck - The OG Duck" contains "the og duck"
+    return nameStr.includes(keyLower) || keyLower.includes(nameStr);
+  });
+
+  if (matchedKey) {
+    return legendsDb[matchedKey];
+  }
+
+  // 3. If it's explicitly marked as 1/1 but doesn't match a specific legend name, return a default 1/1 legend placeholder
+  const isOneOfOne = nameStr.includes("1/1") || 
+    (Array.isArray(attributes) && attributes.some(
+      a => String(a.value || '').toLowerCase() === "1/1" || String(a.trait_type || '').toLowerCase() === "1/1"
+    ));
+    
+  if (isOneOfOne) {
+    return "A legendary 1/1 Decent Duck. Its tale is unique and spoken of in hushed tones across the Sanctuary, a singular sentinel of the flock.";
+  }
+
+  return null;
+}
+
+/**
  * Normalises category and trait keys and returns the corresponding lore paragraph.
  * 
  * @param {string} category - e.g. "Feather", "Attire", "Headwear", etc.
@@ -55,6 +100,21 @@ export function getLoreForTrait(category, traitValue) {
 
   const catLower = catStr.toLowerCase().trim();
   const valLower = valStr.toLowerCase().trim();
+
+  // A. Check SOLANA_TRAIT_MAP mapping lookup first (hidden translation)
+  const mapKey = `${catLower}:${valLower}`;
+  const mappedInfo = SOLANA_TRAIT_MAP[mapKey];
+  if (mappedInfo) {
+    const mappedCategory = mappedInfo.category;
+    const mappedValue = mappedInfo.loreKey;
+    const categoryDb = LORE_DATABASE[mappedCategory];
+    if (categoryDb) {
+      const matchKey = Object.keys(categoryDb).find(
+        (key) => String(key).toLowerCase() === String(mappedValue).toLowerCase()
+      );
+      if (matchKey) return categoryDb[matchKey];
+    }
+  }
 
   // 1. Resolve normalized category via aliases or direct keys
   const mappedCategory = CATEGORY_ALIASES[catLower] || 
