@@ -4,36 +4,7 @@ import headwear from "./headwear.json";
 import accessories from "./accessories.json";
 import eyewear from "./eyewear.json";
 import legends from "./legends.json";
-
-// Alias mapping for flexible trait classification in on-chain metadata
-export const CATEGORY_MAP = {
-  body: "Feather",
-  skin: "Feather",
-  feathers: "Feather",
-  feather: "Feather",
-  
-  attire: "Attire",
-  clothes: "Attire",
-  clothing: "Attire",
-  shirt: "Attire",
-  
-  headwear: "Headwear",
-  hat: "Headwear",
-  hats: "Headwear",
-  
-  accessories: "Accessories",
-  accessory: "Accessories",
-  backpack: "Accessories",
-  weapon: "Accessories",
-  
-  eyewear: "Eyewear",
-  eyes: "Eyewear",
-  glasses: "Eyewear",
-  shades: "Eyewear",
-  
-  legend: "Legend",
-  legends: "Legend"
-};
+import { CATEGORY_ALIASES, TRAIT_ALIASES } from "../traitAliases";
 
 // Map of standard category names to their imported database files
 export const LORE_DATABASE = {
@@ -47,6 +18,26 @@ export const LORE_DATABASE = {
 
 // Default fallback lore text
 export const DEFAULT_LORE = "A mysterious duck from the Decent Ducks Sanctuary. Its story is yet to be fully uncovered by the scribes.";
+
+/**
+ * Normalizes trait strings to generic lowercase format to resolve plural/synonym variations.
+ */
+export function normalizeTraitName(str) {
+  if (!str) return "";
+  return String(str)
+    .toLowerCase()
+    .trim()
+    .replace(/\bbackwards\b/g, "backward")
+    .replace(/\bhats\b/g, "hat")
+    .replace(/\bhat\b/g, "cap")
+    .replace(/\bviser\b/g, "visor")
+    .replace(/\bhoody\b/g, "hoodie")
+    .replace(/\bclothes\b/g, "attire")
+    .replace(/\bclothing\b/g, "attire")
+    .replace(/\beye\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 /**
  * Normalises category and trait keys and returns the corresponding lore paragraph.
@@ -65,39 +56,41 @@ export function getLoreForTrait(category, traitValue) {
   const catLower = catStr.toLowerCase().trim();
   const valLower = valStr.toLowerCase().trim();
 
-  // 1. Resolve normalized category via maps or search
-  const mappedCategory = CATEGORY_MAP[catLower] || 
+  // 1. Resolve normalized category via aliases or direct keys
+  const mappedCategory = CATEGORY_ALIASES[catLower] || 
     Object.keys(LORE_DATABASE).find(key => String(key).toLowerCase() === catLower);
     
   if (!mappedCategory) return null;
   const categoryDb = LORE_DATABASE[mappedCategory];
 
-  // 2. Perform exact matching first
+  // 2. Prioritized lookup sequence:
+  
+  // A. Exact Match
   const exactKey = Object.keys(categoryDb).find(
     (key) => String(key).toLowerCase() === valLower
   );
   if (exactKey) return categoryDb[exactKey];
 
-  // 3. Perform normalized value matching (handle typos and suffixes)
-  let normalizedVal = valLower
-    .replace(/\bviser\b/g, "visor")
-    .replace(/\bhoody\b/g, "hoodie");
-
-  // Clean common trailing descriptors for fuzzy comparison
-  if (mappedCategory === "Feather") {
-    normalizedVal = normalizedVal.replace(/\bduck\b/g, "").trim();
+  // B. Trait Alias check
+  const aliasedName = TRAIT_ALIASES[valLower];
+  if (aliasedName) {
+    const aliasKey = Object.keys(categoryDb).find(
+      (key) => String(key).toLowerCase() === aliasedName.toLowerCase()
+    );
+    if (aliasKey) return categoryDb[aliasKey];
   }
 
-  // Exact check on normalized string
-  const normExactKey = Object.keys(categoryDb).find(
-    (key) => String(key).toLowerCase() === normalizedVal
+  // C. Normalize and Check
+  const normVal = normalizeTraitName(valStr);
+  const normKey = Object.keys(categoryDb).find(
+    (key) => normalizeTraitName(key) === normVal
   );
-  if (normExactKey) return categoryDb[normExactKey];
+  if (normKey) return categoryDb[normKey];
 
-  // 4. Perform fuzzy/substring matching
+  // D. Fuzzy/Substring Match
   const fuzzyKey = Object.keys(categoryDb).find((key) => {
-    const keyLower = String(key).toLowerCase();
-    return keyLower.includes(normalizedVal) || normalizedVal.includes(keyLower);
+    const keyNorm = normalizeTraitName(key);
+    return keyNorm.includes(normVal) || normVal.includes(keyNorm);
   });
 
   return fuzzyKey ? categoryDb[fuzzyKey] : null;

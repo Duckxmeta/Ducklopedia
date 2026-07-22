@@ -5,6 +5,7 @@ import useUserDucks from "../hooks/useUserDucks";
 import { getLoreForTrait, DEFAULT_LORE } from "../data/lore";
 import { CONFIG } from "../config";
 import { renderSafeLore } from "../utils/text";
+import { CATEGORY_ALIASES } from "../data/traitAliases";
 import { BookOpen, ShieldAlert, Sparkles, Wallet, Award } from "lucide-react";
 
 export default function MyDucks() {
@@ -197,6 +198,7 @@ export default function MyDucks() {
                     const isSelected = selectedTrait && 
                                        selectedTrait.trait_type === attr.trait_type && 
                                        selectedTrait.value === attr.value;
+                    const displayCategory = CATEGORY_ALIASES[String(attr.trait_type || '').toLowerCase()] || attr.trait_type;
                     return (
                       <button
                         key={idx}
@@ -211,7 +213,7 @@ export default function MyDucks() {
                         title={hasLore ? "Click to view trait backstory" : "No lore written for this trait yet"}
                         disabled={!hasLore}
                       >
-                        {attr.trait_type}: {attr.value} {!hasLore && " (No Lore)"}
+                        {displayCategory}: {attr.value} {!hasLore && " (No Lore)"}
                       </button>
                     );
                   })}
@@ -236,7 +238,7 @@ export default function MyDucks() {
                 <div className="p-4 bg-amber-100/30 border border-amber-800/20 rounded-lg">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-amber-900/10 pb-2 mb-3 gap-2">
                     <h4 className="font-bold text-amber-950 text-base uppercase tracking-wider">
-                      Trait Backstory: {selectedTrait.trait_type} ({selectedTrait.value})
+                      Trait Backstory: {CATEGORY_ALIASES[String(selectedTrait.trait_type || '').toLowerCase()] || selectedTrait.trait_type} ({selectedTrait.value})
                     </h4>
                     <button
                       onClick={() => setSelectedTrait(null)}
@@ -281,7 +283,7 @@ export default function MyDucks() {
                         {matchedLore.map((item, idx) => (
                           <div key={idx} className="p-3 bg-stone-100/50 border border-stone-200 rounded-lg hover:border-amber-900/15 transition-all">
                             <h5 className="font-bold text-amber-900 text-xs tracking-wider uppercase mb-1">
-                              {item.attr.trait_type}: <span className="text-stone-850 capitalize font-sans">{item.attr.value}</span>
+                              {CATEGORY_ALIASES[String(item.attr.trait_type || '').toLowerCase()] || item.attr.trait_type}: <span className="text-stone-850 capitalize font-sans">{item.attr.value}</span>
                             </h5>
                             <p className="text-sm leading-relaxed">
                               {renderSafeLore(item.lore)}
