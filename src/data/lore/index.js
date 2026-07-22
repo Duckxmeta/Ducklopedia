@@ -4,6 +4,7 @@ import headwear from "./headwear.json";
 import accessories from "./accessories.json";
 import eyewear from "./eyewear.json";
 import legends from "./legends.json";
+import backgrounds from "./backgrounds.json";
 import { CATEGORY_ALIASES, TRAIT_ALIASES } from "../traitAliases";
 import { SOLANA_TRAIT_MAP } from "../traitMapping";
 
@@ -15,6 +16,7 @@ export const LORE_DATABASE = {
   Accessories: accessories,
   Eyewear: eyewear,
   Legend: legends,
+  Background: backgrounds,
 };
 
 // Default fallback lore text
@@ -123,7 +125,13 @@ export function getLoreForTrait(category, traitValue) {
   if (!mappedCategory) return null;
   const categoryDb = LORE_DATABASE[mappedCategory];
 
-  // 2. Prioritized lookup sequence:
+  // 2. Perform normalized value matching (handle typos, suffixes, background words)
+  let normVal = normalizeTraitName(valStr);
+  if (mappedCategory === "Background" && !normVal.includes("background")) {
+    normVal = `${normVal} background`;
+  }
+
+  // 3. Prioritized lookup sequence within primary category:
   
   // A. Exact Match
   const exactKey = Object.keys(categoryDb).find(
@@ -141,7 +149,6 @@ export function getLoreForTrait(category, traitValue) {
   }
 
   // C. Normalize and Check
-  const normVal = normalizeTraitName(valStr);
   const normKey = Object.keys(categoryDb).find(
     (key) => normalizeTraitName(key) === normVal
   );
@@ -152,8 +159,39 @@ export function getLoreForTrait(category, traitValue) {
     const keyNorm = normalizeTraitName(key);
     return keyNorm.includes(normVal) || normVal.includes(keyNorm);
   });
+  if (fuzzyKey) return categoryDb[fuzzyKey];
 
-  return fuzzyKey ? categoryDb[fuzzyKey] : null;
+  // 4. Cross-Category / Global Fallback Lookup:
+  // If no match is found under primary category, search across ALL other databases!
+  for (const catName of Object.keys(LORE_DATABASE)) {
+    if (catName === mappedCategory) continue; // Skip primary category already searched
+    const db = LORE_DATABASE[catName];
+
+    // Check exact match
+    const crossExact = Object.keys(db).find(
+      (key) => String(key).toLowerCase() === valLower
+    );
+    if (crossExact) return db[crossExact];
+
+    // Check normalized match
+    let crossNormVal = normVal;
+    if (catName === "Background" && !crossNormVal.includes("background")) {
+      crossNormVal = `${crossNormVal} background`;
+    }
+    const crossNormKey = Object.keys(db).find(
+      (key) => normalizeTraitName(key) === crossNormVal
+    );
+    if (crossNormKey) return db[crossNormKey];
+
+    // Check fuzzy match
+    const crossFuzzyKey = Object.keys(db).find((key) => {
+      const keyNorm = normalizeTraitName(key);
+      return keyNorm.includes(crossNormVal) || crossNormVal.includes(keyNorm);
+    });
+    if (crossFuzzyKey) return db[crossFuzzyKey];
+  }
+
+  return null;
 }
 
 /**

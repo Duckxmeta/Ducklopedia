@@ -153,10 +153,26 @@ export async function fetchWalletNfts(walletAddress, onProgress) {
       if (hasVerifiedCreator || nameMatch) {
         const rawAttrs = json.attributes;
         const attributes = Array.isArray(rawAttrs)
-          ? rawAttrs.map((attr) => ({
-              trait_type: String(attr.trait_type || attr.name || ""),
-              value: String(attr.value || ""),
-            }))
+          ? rawAttrs
+              .map((attr) => ({
+                trait_type: String(attr.trait_type || attr.name || ""),
+                value: String(attr.value || ""),
+              }))
+              .filter((attr) => {
+                const keyLower = attr.trait_type.toLowerCase();
+                const valLower = attr.value.toLowerCase();
+                const isSystemKey = keyLower.includes("rank") || 
+                                    keyLower.includes("score") || 
+                                    keyLower.includes("id") || 
+                                    keyLower.includes("rarity") || 
+                                    keyLower.includes("generation") || 
+                                    keyLower.includes("minted") ||
+                                    keyLower.includes("sequence") ||
+                                    keyLower.includes("count") ||
+                                    keyLower.includes("number");
+                const isPurelyNumeric = /^\d+$/.test(attr.value.trim());
+                return !isSystemKey && !isPurelyNumeric;
+              })
           : [];
 
         verifiedNfts.push({
@@ -262,10 +278,26 @@ export async function fetchWalletNftsDas(walletAddress) {
     return uniqueItems.map((item) => {
       const rawAttrs = item.content?.metadata?.attributes;
       const attributes = Array.isArray(rawAttrs)
-        ? rawAttrs.map((attr) => ({
-            trait_type: String(attr.trait_type || attr.name || ""),
-            value: String(attr.value || ""),
-          }))
+        ? rawAttrs
+            .map((attr) => ({
+              trait_type: String(attr.trait_type || attr.name || ""),
+              value: String(attr.value || ""),
+            }))
+            .filter((attr) => {
+              const keyLower = attr.trait_type.toLowerCase();
+              const valLower = attr.value.toLowerCase();
+              const isSystemKey = keyLower.includes("rank") || 
+                                  keyLower.includes("score") || 
+                                  keyLower.includes("id") || 
+                                  keyLower.includes("rarity") || 
+                                  keyLower.includes("generation") || 
+                                  keyLower.includes("minted") ||
+                                  keyLower.includes("sequence") ||
+                                  keyLower.includes("count") ||
+                                  keyLower.includes("number");
+              const isPurelyNumeric = /^\d+$/.test(attr.value.trim());
+              return !isSystemKey && !isPurelyNumeric;
+            })
         : [];
 
       return {

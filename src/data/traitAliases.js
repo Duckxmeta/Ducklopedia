@@ -1,20 +1,57 @@
 export const CATEGORY_ALIASES = {
   "hat": "Headwear",
   "hats": "Headwear",
+  "headwear": "Headwear",
   "clothing": "Attire",
   "clothes": "Attire",
   "shirt": "Attire",
+  "attire": "Attire",
   "body": "Feather",
   "skin": "Feather",
   "feathers": "Feather",
+  "feather": "Feather",
   "eyes": "Eyewear",
   "glasses": "Eyewear",
   "shades": "Eyewear",
+  "eyewear": "Eyewear",
   "accessory": "Accessories",
+  "accessories": "Accessories",
   "backpack": "Accessories",
   "weapon": "Accessories",
   "legend": "Legend",
-  "legends": "Legend"
+  "legends": "Legend",
+  "background": "Background",
+  "backgrounds": "Background"
+};
+
+// Maps database keys / metadata strings -> clean user-facing UI labels
+export const DISPLAY_CATEGORIES = {
+  "feather": "Body",
+  "feathers": "Body",
+  "body": "Body",
+  "skin": "Body",
+  
+  "clothing": "Attire",
+  "clothes": "Attire",
+  "shirt": "Attire",
+  "attire": "Attire",
+  
+  "hat": "Headwear",
+  "hats": "Headwear",
+  "headwear": "Headwear",
+  
+  "accessory": "Accessories",
+  "accessories": "Accessories",
+  "backpack": "Accessories",
+  "weapon": "Accessories",
+  
+  "eyes": "Eyewear",
+  "glasses": "Eyewear",
+  "shades": "Eyewear",
+  "eyewear": "Eyewear",
+
+  "background": "Background",
+  "backgrounds": "Background"
 };
 
 export const TRAIT_ALIASES = {
