@@ -73,3 +73,23 @@ export const BODY_FEATHER_MAP = {
   "gold": "Gold (Buff)",
   "black": "Black (Runner)"
 };
+
+export const EYE_TRAIT_MAP = {
+  "eyes 1": "Eyes 1",
+  "eyes 2": "Eyes 2",
+  "eyes 3": "Eyes 3",
+  "eyes 4": "Eyes 4",
+  "eyes 5": "Eyes 5",
+  "eyes:eyes 1": "Eyes 1",
+  "eyes:eyes 2": "Eyes 2",
+  "eyes:eyes 3": "Eyes 3",
+  "eyes:eyes 4": "Eyes 4",
+  "eyes:eyes 5": "Eyes 5",
+  "eyewear:eyes 1": "Eyes 1",
+  "eyewear:eyes 2": "Eyes 2",
+  "eyewear:eyes 3": "Eyes 3",
+  "eyewear:eyes 4": "Eyes 4",
+  "eyewear:eyes 5": "Eyes 5",
+  "green viser": "Eyes 4",
+  "black goggles": "Eyes 5"
+};

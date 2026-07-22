@@ -6,7 +6,7 @@ import { getLoreForTrait, DEFAULT_LORE, getLegendLore, getBackgroundDetails } fr
 import { CONFIG } from "../config";
 import { renderSafeLore } from "../utils/text";
 import { CATEGORY_ALIASES, DISPLAY_CATEGORIES } from "../data/traitAliases";
-import { BODY_FEATHER_MAP } from "../data/traitMapping";
+import { BODY_FEATHER_MAP, EYE_TRAIT_MAP } from "../data/traitMapping";
 import { BookOpen, ShieldAlert, Sparkles, Wallet, Award } from "lucide-react";
 
 export default function MyDucks() {
@@ -51,11 +51,15 @@ export default function MyDucks() {
     return DEFAULT_LORE;
   };
 
-  // Helper to map values (like Body/Feathers colors to Pekin/Mallard breed names)
+  // Helper to map values (like Body/Feathers colors to Pekin/Mallard breed names, and Eyes indexes)
   const getDisplayValue = (type, val) => {
     const tLower = String(type || "").toLowerCase();
+    const valLower = String(val || "").toLowerCase();
     if (tLower === "body" || tLower === "skin" || tLower === "feathers" || tLower === "feather") {
-      return BODY_FEATHER_MAP[String(val || "").toLowerCase()] || val;
+      return BODY_FEATHER_MAP[valLower] || val;
+    }
+    if (tLower === "eyes" || tLower === "eyewear" || tLower === "glasses" || tLower === "shades") {
+      return EYE_TRAIT_MAP[valLower] || val;
     }
     return val;
   };
