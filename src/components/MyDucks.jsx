@@ -74,9 +74,19 @@ export default function MyDucks() {
     if (!duck) return DEFAULT_LORE;
     const nameLower = String(duck.name || '').toLowerCase();
     if (nameLower.includes("egg")) {
-      return "An unhatched Decent Ducks egg. Lore coming soon!";
+      return "Discovered deep within the quiet, untouched thickets of the Sanctuary, a strange and luminescent egg rests softly amidst gold-flecked feathers. Laid by the elders of the Decent Ducks, it radiates an unmistakable, ancient energy. No one knows precisely what slumbers within, but whisperings throughout the grounds suggest it heralds the next great evolution of our sanctuary. It rests, patient and bound to time itself—destined to hatch only when the moment is right.";
     }
     return DEFAULT_LORE;
+  };
+
+  // Helper to resolve token image path, overriding V2 Egg tokens
+  const getDuckImage = (duck) => {
+    if (!duck) return "https://i.imgur.com/pcn60EC.png";
+    const nameLower = String(duck.name || "").toLowerCase();
+    if (nameLower.includes("egg")) {
+      return "https://i.imgur.com/jwun0Ca.png";
+    }
+    return duck.image || "https://i.imgur.com/pcn60EC.png";
   };
 
   // Helper to map values (like Body/Feathers colors to Pekin/Mallard breed names, and Eyes indexes)
@@ -209,7 +219,7 @@ export default function MyDucks() {
                   }`}
                 >
                   <img
-                    src={duck.image}
+                    src={getDuckImage(duck)}
                     alt={duck.name}
                     className="w-12 h-12 rounded-md object-contain border border-stone-300 bg-stone-100 flex-shrink-0"
                     onError={(e) => {
@@ -243,7 +253,7 @@ export default function MyDucks() {
           <div>
             <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start border-b border-stone-200 pb-5 mb-5">
               <img
-                src={selectedDuck.image}
+                src={getDuckImage(selectedDuck)}
                 alt={selectedDuck.name}
                 className="w-32 h-32 rounded-xl object-contain border-2 border-amber-900/40 bg-amber-50 shadow-md"
                 onError={(e) => {
@@ -263,31 +273,42 @@ export default function MyDucks() {
                   </button>
                 </div>
                 <div className="flex flex-wrap justify-center sm:justify-start gap-1.5 mt-2.5">
-                  {selectedDuck.attributes?.map((attr, idx) => {
-                    const hasLore = getLoreForTrait(attr.trait_type, attr.value);
-                    const isSelected = selectedTrait && 
-                                       selectedTrait.trait_type === attr.trait_type && 
-                                       selectedTrait.value === attr.value;
-                    const displayCategory = DISPLAY_CATEGORIES[String(attr.trait_type || '').toLowerCase()] || attr.trait_type;
-                    const displayValue = getDisplayValue(attr.trait_type, attr.value);
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => setSelectedTrait(isSelected ? null : attr)}
-                        className={`px-2.5 py-0.5 text-xs rounded-full font-serif font-semibold border transition-all ${
-                          isSelected
-                            ? "bg-amber-900 text-stone-100 border-amber-950 shadow-sm"
-                            : hasLore
-                            ? "bg-amber-900/10 text-amber-950 border-amber-900/25 hover:bg-amber-900/20 cursor-pointer"
-                            : "bg-stone-200/50 text-stone-600 border-stone-300/40 opacity-70 cursor-not-allowed"
-                        }`}
-                        title={hasLore ? "Click to view trait backstory" : "No lore written for this trait yet"}
-                        disabled={!hasLore}
-                      >
-                        {displayCategory}: {displayValue} {!hasLore && " (No Lore)"}
-                      </button>
-                    );
-                  })}
+                  {String(selectedDuck.name || "").toLowerCase().includes("egg") ? (
+                    <>
+                      <span className="px-2.5 py-1 text-xs rounded-full font-serif font-semibold border bg-amber-900/10 text-amber-950 border-amber-900/25">
+                        Type: Decent Ducks V2 Egg
+                      </span>
+                      <span className="px-2.5 py-1 text-xs rounded-full font-serif font-semibold border bg-amber-900 text-stone-100 border-amber-950 shadow-sm">
+                        Status: Unhatched
+                      </span>
+                    </>
+                  ) : (
+                    selectedDuck.attributes?.map((attr, idx) => {
+                      const hasLore = getLoreForTrait(attr.trait_type, attr.value);
+                      const isSelected = selectedTrait && 
+                                         selectedTrait.trait_type === attr.trait_type && 
+                                         selectedTrait.value === attr.value;
+                      const displayCategory = DISPLAY_CATEGORIES[String(attr.trait_type || '').toLowerCase()] || attr.trait_type;
+                      const displayValue = getDisplayValue(attr.trait_type, attr.value);
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => setSelectedTrait(isSelected ? null : attr)}
+                          className={`px-2.5 py-0.5 text-xs rounded-full font-serif font-semibold border transition-all ${
+                            isSelected
+                              ? "bg-amber-900 text-stone-100 border-amber-950 shadow-sm"
+                              : hasLore
+                              ? "bg-amber-900/10 text-amber-950 border-amber-900/25 hover:bg-amber-900/20 cursor-pointer"
+                              : "bg-stone-200/50 text-stone-600 border-stone-300/40 opacity-70 cursor-not-allowed"
+                          }`}
+                          title={hasLore ? "Click to view trait backstory" : "No lore written for this trait yet"}
+                          disabled={!hasLore}
+                        >
+                          {displayCategory}: {displayValue} {!hasLore && " (No Lore)"}
+                        </button>
+                      );
+                    })
+                  )}
                 </div>
                 
                 {/* Realm Environment Tone Badge */}
@@ -446,7 +467,7 @@ export default function MyDucks() {
               {/* Artwork Frame */}
               <div className="w-44 h-44 bg-[#231b15] border-2 border-amber-900/30 rounded-xl overflow-hidden shadow-inner p-1.5 flex items-center justify-center relative mb-3">
                 <img
-                  src={selectedDuck.image}
+                  src={getDuckImage(selectedDuck)}
                   alt={selectedDuck.name}
                   className="w-full h-full object-contain rounded-lg"
                   onError={(e) => {
@@ -475,12 +496,9 @@ export default function MyDucks() {
                   Artistic Traits
                 </h5>
                 <div className="grid grid-cols-2 gap-1 text-[9px]">
-                  {selectedDuck.attributes?.slice(0, 6).map((attr, idx) => {
-                    const displayCategory = DISPLAY_CATEGORIES[String(attr.trait_type || '').toLowerCase()] || attr.trait_type;
-                    const displayValue = getDisplayValue(attr.trait_type, attr.value);
-                    return (
+                  {String(selectedDuck.name || "").toLowerCase().includes("egg") ? (
+                    <>
                       <div
-                        key={idx}
                         className="p-1.5 rounded flex flex-col justify-between truncate"
                         style={{ backgroundColor: '#1E1B18', border: '1px solid #4A3E35' }}
                       >
@@ -488,18 +506,60 @@ export default function MyDucks() {
                           className="text-[7.5px] font-mono uppercase truncate trait-category-label"
                           style={{ color: '#FFC107', fontWeight: 600 }}
                         >
-                          {displayCategory}
+                          TYPE
                         </span>
                         <span
                           className="font-sans truncate mt-0.5 export-card-trait-value trait-value"
-                          title={displayValue}
                           style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '0.9rem' }}
                         >
-                          {displayValue}
+                          V2 Egg
                         </span>
                       </div>
-                    );
-                  })}
+                      <div
+                        className="p-1.5 rounded flex flex-col justify-between truncate"
+                        style={{ backgroundColor: '#1E1B18', border: '1px solid #4A3E35' }}
+                      >
+                        <span
+                          className="text-[7.5px] font-mono uppercase truncate trait-category-label"
+                          style={{ color: '#FFC107', fontWeight: 600 }}
+                        >
+                          STATUS
+                        </span>
+                        <span
+                          className="font-sans truncate mt-0.5 export-card-trait-value trait-value"
+                          style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '0.9rem' }}
+                        >
+                          Unhatched
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    selectedDuck.attributes?.slice(0, 6).map((attr, idx) => {
+                      const displayCategory = DISPLAY_CATEGORIES[String(attr.trait_type || '').toLowerCase()] || attr.trait_type;
+                      const displayValue = getDisplayValue(attr.trait_type, attr.value);
+                      return (
+                        <div
+                          key={idx}
+                          className="p-1.5 rounded flex flex-col justify-between truncate"
+                          style={{ backgroundColor: '#1E1B18', border: '1px solid #4A3E35' }}
+                        >
+                          <span
+                            className="text-[7.5px] font-mono uppercase truncate trait-category-label"
+                            style={{ color: '#FFC107', fontWeight: 600 }}
+                          >
+                            {displayCategory}
+                          </span>
+                          <span
+                            className="font-sans truncate mt-0.5 export-card-trait-value trait-value"
+                            title={displayValue}
+                            style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '0.9rem' }}
+                          >
+                            {displayValue}
+                          </span>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </div>
               
