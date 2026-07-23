@@ -485,13 +485,13 @@ export default function MyDucks() {
                         style={{ backgroundColor: '#1E1B18', border: '1px solid #4A3E35' }}
                       >
                         <span
-                          className="text-[7.5px] font-mono uppercase truncate"
+                          className="text-[7.5px] font-mono uppercase truncate trait-category-label"
                           style={{ color: '#FFC107', fontWeight: 600 }}
                         >
                           {displayCategory}
                         </span>
                         <span
-                          className="font-sans truncate mt-0.5"
+                          className="font-sans truncate mt-0.5 export-card-trait-value"
                           title={displayValue}
                           style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '0.9rem' }}
                         >
@@ -526,14 +526,14 @@ export default function MyDucks() {
                     <div className="space-y-1">
                       {bgDetails && (
                         <div
-                          className="text-[8.5px] font-mono"
+                          className="text-[8.5px] font-mono environmental-realm-title"
                           style={{ color: '#FFC107', fontWeight: 700 }}
                         >
                           ✦ ENVIRONMENTAL REALM: {bgDetails.title}
                         </div>
                       )}
                       <p
-                        className="leading-relaxed text-[10.5px]"
+                        className="leading-relaxed text-[10.5px] quote-text"
                         style={{ color: '#FFFFFF', fontStyle: 'italic', opacity: 1 }}
                       >
                         "{excerpt}"
@@ -545,7 +545,7 @@ export default function MyDucks() {
               
               {/* Branding Footer */}
               <div
-                className="text-[8px] font-mono uppercase tracking-widest mt-0.5 flex items-center gap-1"
+                className="text-[8px] font-mono uppercase tracking-widest mt-0.5 flex items-center gap-1 branding-footer"
                 style={{ color: '#E0D0C0' }}
               >
                 ✦ DECENTDUCKS.ME • LORE BOOK ✦
