@@ -224,7 +224,8 @@ export default function MyDucks() {
                     alt={duck.name}
                     className="w-12 h-12 rounded-md object-contain border border-stone-300 bg-stone-100 flex-shrink-0"
                     onError={(e) => {
-                      e.target.src = "https://i.imgur.com/pcn60EC.png";
+                      const isEgg = String(duck.name || "").toLowerCase().includes("egg") || duck.isEgg;
+                      e.target.src = isEgg ? "https://i.imgur.com/jwun0Ca.png" : "https://i.imgur.com/pcn60EC.png";
                     }}
                   />
                   <div className="min-w-0">
@@ -258,7 +259,8 @@ export default function MyDucks() {
                 alt={selectedDuck.name}
                 className="w-32 h-32 rounded-xl object-contain border-2 border-amber-900/40 bg-amber-50 shadow-md"
                 onError={(e) => {
-                  e.target.src = "https://i.imgur.com/pcn60EC.png";
+                  const isEgg = String(selectedDuck.name || "").toLowerCase().includes("egg") || selectedDuck.isEgg;
+                  e.target.src = isEgg ? "https://i.imgur.com/jwun0Ca.png" : "https://i.imgur.com/pcn60EC.png";
                 }}
               />
               <div className="text-center sm:text-left min-w-0 flex-grow">
@@ -472,7 +474,8 @@ export default function MyDucks() {
                   alt={selectedDuck.name}
                   className="w-full h-full object-contain rounded-lg"
                   onError={(e) => {
-                    e.target.src = "https://i.imgur.com/pcn60EC.png";
+                    const isEgg = String(selectedDuck.name || "").toLowerCase().includes("egg") || selectedDuck.isEgg;
+                    e.target.src = isEgg ? "https://i.imgur.com/jwun0Ca.png" : "https://i.imgur.com/pcn60EC.png";
                   }}
                 />
                 <div className="absolute bottom-1.5 right-1.5 bg-amber-950/85 border border-amber-500/30 px-1.5 py-0.5 rounded text-[8px] font-mono text-amber-400">

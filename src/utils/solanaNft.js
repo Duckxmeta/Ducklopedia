@@ -133,26 +133,20 @@ export async function fetchWalletNfts(walletAddress, onProgress) {
   // 6. Fetch external JSON metadata and filter for Decent Ducks
   const verifiedNfts = [];
   const fetchPromises = candidates.map(async (candidate) => {
+    const isEgg = String(candidate.name || "").toLowerCase().includes("egg") ||
+                  String(candidate.name || "").toLowerCase().includes("v2");
     try {
       // Fetch the JSON metadata
       const res = await fetch(candidate.uri);
-      if (!res.ok) return;
-      const json = await res.json();
+      let json = {};
+      let onChainImage = "";
+      let attributes = [];
 
-      // Check if it belongs to the collection
-      // We can verify:
-      // A. By checking if the creator address matches CONFIG.collectionCreatorAddress
-      // B. By checking the name (fallback)
-      const creators = json.properties?.creators || json.creators || [];
-      const hasVerifiedCreator = creators.some(
-        (creator) => TARGET_COLLECTIONS.includes(creator.address)
-      );
-      
-      const nameMatch = String(candidate.name || "").toLowerCase().includes("decent duck");
-
-      if (hasVerifiedCreator || nameMatch) {
+      if (res.ok) {
+        json = await res.json();
+        onChainImage = String(json.image || json.properties?.files?.[0]?.uri || json.properties?.files?.[0]?.url || "");
         const rawAttrs = json.attributes;
-        const attributes = Array.isArray(rawAttrs)
+        attributes = Array.isArray(rawAttrs)
           ? rawAttrs
               .map((attr) => ({
                 trait_type: String(attr.trait_type || attr.name || ""),
@@ -174,11 +168,17 @@ export async function fetchWalletNfts(walletAddress, onProgress) {
                 return !isSystemKey && !isPurelyNumeric;
               })
           : [];
+      }
 
-        const isEgg = String(candidate.name || "").toLowerCase().includes("egg") ||
-                      String(candidate.name || "").toLowerCase().includes("v2");
-        const onChainImage = String(json.image || json.properties?.files?.[0]?.uri || json.properties?.files?.[0]?.url || "");
+      // Check if it belongs to the collection
+      const creators = json.properties?.creators || json.creators || [];
+      const hasVerifiedCreator = creators.some(
+        (creator) => TARGET_COLLECTIONS.includes(creator.address)
+      );
+      
+      const nameMatch = String(candidate.name || "").toLowerCase().includes("decent duck");
 
+      if (hasVerifiedCreator || nameMatch || isEgg) {
         verifiedNfts.push({
           mint: String(candidate.mint || ""),
           name: String(candidate.name || "Decent Duck"),
@@ -189,6 +189,15 @@ export async function fetchWalletNfts(walletAddress, onProgress) {
       }
     } catch (e) {
       console.warn(`Failed to fetch metadata for ${candidate.name} from ${candidate.uri}`, e);
+      if (isEgg) {
+        verifiedNfts.push({
+          mint: String(candidate.mint || ""),
+          name: String(candidate.name || "Decent Duck Egg"),
+          image: "https://i.imgur.com/jwun0Ca.png",
+          attributes: [],
+          isEgg: true,
+        });
+      }
     }
   });
 
