@@ -82,11 +82,12 @@ export default function MyDucks() {
   // Helper to resolve token image path, overriding V2 Egg tokens
   const getDuckImage = (duck) => {
     if (!duck) return "https://i.imgur.com/pcn60EC.png";
+    if (duck.image) return duck.image;
     const nameLower = String(duck.name || "").toLowerCase();
     if (nameLower.includes("egg") || duck.isEgg) {
       return "https://i.imgur.com/jwun0Ca.png";
     }
-    return duck.image || "https://i.imgur.com/pcn60EC.png";
+    return "https://i.imgur.com/pcn60EC.png";
   };
 
   // Helper to map values (like Body/Feathers colors to Pekin/Mallard breed names, and Eyes indexes)

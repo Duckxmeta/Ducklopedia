@@ -177,11 +177,12 @@ export async function fetchWalletNfts(walletAddress, onProgress) {
 
         const isEgg = String(candidate.name || "").toLowerCase().includes("egg") ||
                       String(candidate.name || "").toLowerCase().includes("v2");
+        const onChainImage = String(json.image || json.properties?.files?.[0]?.uri || json.properties?.files?.[0]?.url || "");
 
         verifiedNfts.push({
           mint: String(candidate.mint || ""),
           name: String(candidate.name || "Decent Duck"),
-          image: isEgg ? "https://i.imgur.com/jwun0Ca.png" : String(json.image || ""),
+          image: onChainImage || (isEgg ? "https://i.imgur.com/jwun0Ca.png" : ""),
           attributes,
           isEgg,
         });
@@ -309,10 +310,12 @@ export async function fetchWalletNftsDas(walletAddress) {
                     nameStr.toLowerCase().includes("v2") ||
                     item.grouping?.some(g => String(g.group_value) === "DEADsTGdpwgudGq4SUMPqzETzoaqAuDHbQovkTzTEA1R");
 
+      const onChainImage = String(item.content?.files?.[0]?.uri || item.content?.links?.image || "");
+
       return {
         mint: String(item.id || ""),
         name: nameStr,
-        image: isEgg ? "https://i.imgur.com/jwun0Ca.png" : String(item.content?.files?.[0]?.uri || item.content?.links?.image || ""),
+        image: onChainImage || (isEgg ? "https://i.imgur.com/jwun0Ca.png" : ""),
         attributes,
         isEgg,
       };
