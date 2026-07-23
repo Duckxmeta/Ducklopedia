@@ -73,7 +73,7 @@ export default function MyDucks() {
   const getFallbackLore = (duck) => {
     if (!duck) return DEFAULT_LORE;
     const nameLower = String(duck.name || '').toLowerCase();
-    if (nameLower.includes("egg")) {
+    if (nameLower.includes("egg") || duck.isEgg) {
       return "Discovered deep within the quiet, untouched thickets of the Sanctuary, a strange and luminescent egg rests softly amidst gold-flecked feathers. Laid by the elders of the Decent Ducks, it radiates an unmistakable, ancient energy. No one knows precisely what slumbers within, but whisperings throughout the grounds suggest it heralds the next great evolution of our sanctuary. It rests, patient and bound to time itself—destined to hatch only when the moment is right.";
     }
     return DEFAULT_LORE;
@@ -83,7 +83,7 @@ export default function MyDucks() {
   const getDuckImage = (duck) => {
     if (!duck) return "https://i.imgur.com/pcn60EC.png";
     const nameLower = String(duck.name || "").toLowerCase();
-    if (nameLower.includes("egg")) {
+    if (nameLower.includes("egg") || duck.isEgg) {
       return "https://i.imgur.com/jwun0Ca.png";
     }
     return duck.image || "https://i.imgur.com/pcn60EC.png";
@@ -273,7 +273,7 @@ export default function MyDucks() {
                   </button>
                 </div>
                 <div className="flex flex-wrap justify-center sm:justify-start gap-1.5 mt-2.5">
-                  {String(selectedDuck.name || "").toLowerCase().includes("egg") ? (
+                  {String(selectedDuck.name || "").toLowerCase().includes("egg") || selectedDuck.isEgg ? (
                     <>
                       <span className="px-2.5 py-1 text-xs rounded-full font-serif font-semibold border bg-amber-900/10 text-amber-950 border-amber-900/25">
                         Type: Decent Ducks V2 Egg
@@ -496,7 +496,7 @@ export default function MyDucks() {
                   Artistic Traits
                 </h5>
                 <div className="grid grid-cols-2 gap-1 text-[9px]">
-                  {String(selectedDuck.name || "").toLowerCase().includes("egg") ? (
+                  {String(selectedDuck.name || "").toLowerCase().includes("egg") || selectedDuck.isEgg ? (
                     <>
                       <div
                         className="p-1.5 rounded flex flex-col justify-between truncate"

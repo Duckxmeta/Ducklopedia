@@ -175,11 +175,15 @@ export async function fetchWalletNfts(walletAddress, onProgress) {
               })
           : [];
 
+        const isEgg = String(candidate.name || "").toLowerCase().includes("egg") ||
+                      String(candidate.name || "").toLowerCase().includes("v2");
+
         verifiedNfts.push({
           mint: String(candidate.mint || ""),
           name: String(candidate.name || "Decent Duck"),
-          image: String(json.image || ""),
+          image: isEgg ? "https://i.imgur.com/jwun0Ca.png" : String(json.image || ""),
           attributes,
+          isEgg,
         });
       }
     } catch (e) {
@@ -300,11 +304,17 @@ export async function fetchWalletNftsDas(walletAddress) {
             })
         : [];
 
+      const nameStr = String(item.content?.metadata?.name || "Decent Duck");
+      const isEgg = nameStr.toLowerCase().includes("egg") ||
+                    nameStr.toLowerCase().includes("v2") ||
+                    item.grouping?.some(g => String(g.group_value) === "DEADsTGdpwgudGq4SUMPqzETzoaqAuDHbQovkTzTEA1R");
+
       return {
         mint: String(item.id || ""),
-        name: String(item.content?.metadata?.name || "Decent Duck"),
-        image: String(item.content?.files?.[0]?.uri || item.content?.links?.image || ""),
+        name: nameStr,
+        image: isEgg ? "https://i.imgur.com/jwun0Ca.png" : String(item.content?.files?.[0]?.uri || item.content?.links?.image || ""),
         attributes,
+        isEgg,
       };
     });
   } catch (error) {
