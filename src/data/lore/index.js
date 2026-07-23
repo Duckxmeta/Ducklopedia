@@ -5,6 +5,7 @@ import accessories from "./accessories.json";
 import eyewear from "./eyewear.json";
 import legends from "./legends.json";
 import backgrounds from "./backgrounds.json";
+import v2Eggs from "./v2_eggs.json";
 import { CATEGORY_ALIASES, TRAIT_ALIASES } from "../traitAliases";
 import { SOLANA_TRAIT_MAP, BODY_FEATHER_MAP, EYE_TRAIT_MAP, EYEWEAR_MAP, ATTIRE_MAP, normalizeEyewearName, HEADWEAR_MAP } from "../traitMapping";
 
@@ -17,6 +18,7 @@ export const LORE_DATABASE = {
   Eyewear: eyewear,
   Legend: legends,
   Background: backgrounds,
+  "V2 Egg": v2Eggs,
 };
 
 // Default fallback lore text

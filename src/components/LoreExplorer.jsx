@@ -92,6 +92,9 @@ const getTraitImage = (category, name) => {
     if (name === "The BullDuck") return "https://i.imgur.com/FqUe7KS.png";
     return "https://i.imgur.com/OdtiPGK.png";
   }
+  if (category === "V2 Egg") {
+    return "https://i.imgur.com/jwun0Ca.png";
+  }
   return "https://i.imgur.com/pcn60EC.png";
 };
 
