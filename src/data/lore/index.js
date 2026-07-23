@@ -291,9 +291,13 @@ export function getLoreForTrait(category, traitValue) {
 export function getAllCategories() {
   return Object.keys(LORE_DATABASE).map((categoryName) => ({
     name: categoryName,
-    traits: Object.keys(LORE_DATABASE[categoryName]).map((traitName) => ({
-      name: traitName,
-      description: LORE_DATABASE[categoryName][traitName],
-    })),
+    traits: Object.keys(LORE_DATABASE[categoryName]).map((traitName) => {
+      const rawDesc = LORE_DATABASE[categoryName][traitName];
+      const desc = rawDesc && typeof rawDesc === "object" ? (rawDesc.lore || rawDesc.description || "") : rawDesc;
+      return {
+        name: traitName,
+        description: desc,
+      };
+    }),
   }));
 }

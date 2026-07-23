@@ -3,6 +3,16 @@ import { getAllCategories } from "../data/lore";
 import { renderSafeLore } from "../utils/text";
 import { Compass, Book, ArrowRight, Star } from "lucide-react";
 
+// Hex colors for dynamic background previews
+const BACKGROUND_COLORS = {
+  "green": "#4CAF50",
+  "blue": "#2196F3",
+  "yellow": "#FFEB3B",
+  "orange": "#FF9800",
+  "purple": "#9C27B0",
+  "red": "#F44336"
+};
+
 // Image mapping helper matching the assets used in index.html
 const getTraitImage = (category, name) => {
   if (category === "Feather") {
@@ -145,14 +155,23 @@ export default function LoreExplorer() {
                     : "bg-white/80 border-stone-200 hover:bg-stone-50"
                 }`}
               >
-                <img
-                  src={traitImage}
-                  alt={trait.name}
-                  className="w-14 h-14 object-contain mb-2 drop-shadow-sm"
-                  onError={(e) => {
-                    e.target.src = "https://i.imgur.com/pcn60EC.png";
+                <div
+                  className="w-14 h-14 rounded-md overflow-hidden flex items-center justify-center mb-2 drop-shadow-sm border border-stone-200"
+                  style={{
+                    backgroundColor: selectedCategory.name === "Background" 
+                      ? (BACKGROUND_COLORS[trait.name.toLowerCase()] || "transparent")
+                      : "transparent"
                   }}
-                />
+                >
+                  <img
+                    src={traitImage}
+                    alt={trait.name}
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      e.target.src = "https://i.imgur.com/pcn60EC.png";
+                    }}
+                  />
+                </div>
                 <span className="font-serif text-sm font-bold text-stone-800 line-clamp-2">
                   {trait.name}
                 </span>
@@ -173,11 +192,20 @@ export default function LoreExplorer() {
         {selectedTrait ? (
           <div className="flex flex-col h-full justify-between">
             <div className="flex flex-col items-center text-center border-b border-stone-300 pb-4 mb-4">
-              <img
-                src={getTraitImage(selectedCategory.name, selectedTrait.name)}
-                alt={selectedTrait.name}
-                className="w-28 h-28 object-contain mb-3 drop-shadow-md"
-              />
+              <div
+                className="w-28 h-28 rounded-xl overflow-hidden flex items-center justify-center mb-3 drop-shadow-md border-2 border-stone-200 p-1"
+                style={{
+                  backgroundColor: selectedCategory.name === "Background" 
+                    ? (BACKGROUND_COLORS[selectedTrait.name.toLowerCase()] || "transparent")
+                    : "transparent"
+                }}
+              >
+                <img
+                  src={getTraitImage(selectedCategory.name, selectedTrait.name)}
+                  alt={selectedTrait.name}
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <span className="text-[10px] font-mono tracking-widest text-amber-800 uppercase font-semibold">
                 Category: {selectedCategory.name}
               </span>
@@ -188,7 +216,11 @@ export default function LoreExplorer() {
 
             <div className="flex-grow overflow-y-auto max-h-[260px] pr-2">
               <p className="font-serif text-stone-850 leading-relaxed text-base italic">
-                {renderSafeLore(selectedTrait.description)}
+                {renderSafeLore(
+                  selectedTrait.description && typeof selectedTrait.description === "object"
+                    ? (selectedTrait.description.lore || selectedTrait.description.description || "")
+                    : selectedTrait.description
+                )}
               </p>
             </div>
 
