@@ -471,9 +471,9 @@ export default function MyDucks() {
                     const displayCategory = DISPLAY_CATEGORIES[String(attr.trait_type || '').toLowerCase()] || attr.trait_type;
                     const displayValue = getDisplayValue(attr.trait_type, attr.value);
                     return (
-                      <div key={idx} className="bg-[#241a13] border border-amber-950/30 p-1.5 rounded flex flex-col justify-between truncate">
-                        <span className="text-[7px] font-mono text-amber-600/70 uppercase truncate">{displayCategory}</span>
-                        <span className="text-amber-100 font-sans font-bold truncate mt-0.5" title={displayValue}>
+                      <div key={idx} className="bg-[#2C2421] border border-[#3D332D] p-1.5 rounded flex flex-col justify-between truncate">
+                        <span className="text-[7.5px] font-mono text-[#E2A85C] font-semibold uppercase truncate">{displayCategory}</span>
+                        <span className="text-white font-sans font-semibold text-[10px] truncate mt-0.5" title={displayValue}>
                           {displayValue}
                         </span>
                       </div>
@@ -501,11 +501,11 @@ export default function MyDucks() {
                   return (
                     <div className="space-y-1">
                       {bgDetails && (
-                        <div className="text-[8px] font-mono text-amber-400">
+                        <div className="text-[8.5px] font-mono text-[#E2A85C] font-semibold">
                           ✦ ENVIRONMENTAL REALM: {bgDetails.title}
                         </div>
                       )}
-                      <p className="text-stone-300 italic leading-relaxed">
+                      <p className="text-white/95 italic leading-relaxed text-[10.5px]">
                         "{excerpt}"
                       </p>
                     </div>
@@ -514,7 +514,7 @@ export default function MyDucks() {
               </div>
               
               {/* Branding Footer */}
-              <div className="text-[8px] font-mono text-amber-500/40 uppercase tracking-widest mt-0.5 flex items-center gap-1">
+              <div className="text-[8px] font-mono text-[#E2A85C]/75 font-semibold uppercase tracking-widest mt-0.5 flex items-center gap-1">
                 ✦ DECENTDUCKS.ME • LORE BOOK ✦
               </div>
             </div>
