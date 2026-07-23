@@ -7,19 +7,47 @@ import { CONFIG } from "../config";
 import { renderSafeLore } from "../utils/text";
 import { CATEGORY_ALIASES, DISPLAY_CATEGORIES } from "../data/traitAliases";
 import { BODY_FEATHER_MAP, EYE_TRAIT_MAP, EYEWEAR_MAP, ATTIRE_MAP, normalizeEyewearName, HEADWEAR_MAP } from "../data/traitMapping";
-import { BookOpen, ShieldAlert, Sparkles, Wallet, Award } from "lucide-react";
+import { BookOpen, ShieldAlert, Sparkles, Wallet, Award, Camera, X, Download } from "lucide-react";
+import html2canvas from "html2canvas";
 
 export default function MyDucks() {
   const { publicKey, connected } = useWallet();
   const [selectedDuck, setSelectedDuck] = useState(null);
   const [selectedTrait, setSelectedTrait] = useState(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   // Derive wallet address string
   const walletAddress = publicKey ? publicKey.toString() : null;
 
   // Consume the custom hook
   const { ducks, loading, loadingStep, error } = useUserDucks(walletAddress, isDemoMode);
+
+  const exportAsPng = async () => {
+    const shareNode = document.getElementById("social-share-card-content");
+    if (!shareNode) return;
+    setIsExporting(true);
+    try {
+      // Small timeout to allow render/asset loading if needed
+      await new Promise(resolve => setTimeout(resolve, 150));
+      const canvas = await html2canvas(shareNode, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#16100b",
+        scale: 2, // Double resolution for sharp text/assets
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.download = `${selectedDuck.name.replace(/\s+/g, "_")}_LoreCard.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Export failed", err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // Automatically select the first duck in the list when data loads
   useEffect(() => {
@@ -149,9 +177,30 @@ export default function MyDucks() {
               return (
                 <button
                   key={duck.mint}
-                  onClick={() => {
+                  onClick={(e) => {
                     setSelectedDuck(duck);
                     setSelectedTrait(null);
+                    if (window.innerWidth < 768) {
+                      setTimeout(() => {
+                        const el = document.getElementById("duck-details-container");
+                        if (el) {
+                          el.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }
+                      }, 100);
+                    }
+                  }}
+                  onTouchEnd={(e) => {
+                    e.preventDefault(); // prevent click double-triggering
+                    setSelectedDuck(duck);
+                    setSelectedTrait(null);
+                    if (window.innerWidth < 768) {
+                      setTimeout(() => {
+                        const el = document.getElementById("duck-details-container");
+                        if (el) {
+                          el.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }
+                      }, 100);
+                    }
                   }}
                   className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${
                     isSelected
@@ -183,7 +232,7 @@ export default function MyDucks() {
       </div>
 
       {/* Right Column: Lore Book details */}
-      <div className="flex-grow w-full lg:w-2/3 bg-stone-50 border border-stone-300 rounded-xl p-6 shadow-md relative overflow-hidden flex flex-col justify-between">
+      <div id="duck-details-container" className="flex-grow w-full lg:w-2/3 bg-stone-50 border border-stone-300 rounded-xl p-6 shadow-md relative overflow-hidden flex flex-col justify-between">
         {/* Decorative corners */}
         <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-amber-900/30 rounded-tl-lg pointer-events-none"></div>
         <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-amber-900/30 rounded-tr-lg pointer-events-none"></div>
@@ -202,9 +251,17 @@ export default function MyDucks() {
                 }}
               />
               <div className="text-center sm:text-left min-w-0 flex-grow">
-                <h2 className="font-serif text-3xl font-bold text-amber-950 leading-tight">
-                  {selectedDuck.name}
-                </h2>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <h2 className="font-serif text-3xl font-bold text-amber-950 leading-tight">
+                    {selectedDuck.name}
+                  </h2>
+                  <button
+                    onClick={() => setIsShareModalOpen(true)}
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-850 text-stone-100 font-serif font-bold text-xs rounded shadow hover:bg-amber-950 transition-all cursor-pointer w-fit self-center sm:self-auto"
+                  >
+                    <Camera className="w-3.5 h-3.5" /> 📸 Share Card
+                  </button>
+                </div>
                 <div className="flex flex-wrap justify-center sm:justify-start gap-1.5 mt-2.5">
                   {selectedDuck.attributes?.map((attr, idx) => {
                     const hasLore = getLoreForTrait(attr.trait_type, attr.value);
@@ -347,6 +404,150 @@ export default function MyDucks() {
           </div>
         )}
       </div>
+
+      {/* Share / Social Post Card Modal Overlay */}
+      {isShareModalOpen && selectedDuck && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#1c140e] border-2 border-amber-900/40 rounded-2xl max-w-sm w-full shadow-2xl relative p-5 flex flex-col items-center">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setIsShareModalOpen(false)}
+              className="absolute top-3 right-3 text-stone-400 hover:text-stone-100 transition-colors p-1 bg-stone-900/50 rounded-full border border-stone-800 cursor-pointer"
+              title="Close modal"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {/* Modal Header */}
+            <div className="text-center mb-4">
+              <h3 className="font-serif text-amber-100 text-lg font-bold">📸 Sanctuary Export</h3>
+              <p className="text-[10px] text-stone-400 font-sans mt-0.5">
+                Screenshot this card or download it directly to share on X / TikTok.
+              </p>
+            </div>
+
+            {/* Trading Card content targeting html2canvas */}
+            <div
+              id="social-share-card-content"
+              className="p-5 bg-[#16100b] border border-amber-950/40 rounded-xl w-full flex flex-col items-center text-stone-100 font-serif relative overflow-hidden"
+              style={{ width: "320px" }}
+            >
+              {/* Outer Golden Accented Border */}
+              <div className="absolute inset-2 border border-amber-900/15 rounded-lg pointer-events-none"></div>
+              
+              {/* Header subtitle */}
+              <div className="text-[9px] tracking-widest font-mono text-amber-500/80 uppercase mb-2">
+                Decent Ducks Registry
+              </div>
+              
+              {/* Artwork Frame */}
+              <div className="w-44 h-44 bg-[#231b15] border-2 border-amber-900/30 rounded-xl overflow-hidden shadow-inner p-1.5 flex items-center justify-center relative mb-3">
+                <img
+                  src={selectedDuck.image}
+                  alt={selectedDuck.name}
+                  className="w-full h-full object-contain rounded-lg"
+                  onError={(e) => {
+                    e.target.src = "https://i.imgur.com/pcn60EC.png";
+                  }}
+                />
+                <div className="absolute bottom-1.5 right-1.5 bg-amber-950/85 border border-amber-500/30 px-1.5 py-0.5 rounded text-[8px] font-mono text-amber-400">
+                  ID: #{selectedDuck.name.replace(/^\D+/g, "") || selectedDuck.mint.slice(0, 6)}
+                </div>
+              </div>
+              
+              {/* Name */}
+              <h4 className="text-lg font-bold text-amber-100 mb-2.5 tracking-wide text-center">
+                {selectedDuck.name}
+              </h4>
+              
+              {/* Attributes Grid */}
+              <div className="w-full space-y-1 mb-3">
+                <h5 className="text-[8px] font-mono text-amber-500/50 uppercase tracking-wider text-left border-b border-amber-900/20 pb-0.5 mb-1">
+                  Artistic Traits
+                </h5>
+                <div className="grid grid-cols-2 gap-1 text-[9px]">
+                  {selectedDuck.attributes?.slice(0, 6).map((attr, idx) => {
+                    const displayCategory = DISPLAY_CATEGORIES[String(attr.trait_type || '').toLowerCase()] || attr.trait_type;
+                    const displayValue = getDisplayValue(attr.trait_type, attr.value);
+                    return (
+                      <div key={idx} className="bg-[#241a13] border border-amber-950/30 p-1.5 rounded flex flex-col justify-between truncate">
+                        <span className="text-[7px] font-mono text-amber-600/70 uppercase truncate">{displayCategory}</span>
+                        <span className="text-amber-100 font-sans font-bold truncate mt-0.5" title={displayValue}>
+                          {displayValue}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              {/* Chronicle Snippet / Environment */}
+              <div className="w-full bg-[#1b130e] border border-amber-950/30 p-2.5 rounded-lg text-left text-[10px] mb-2.5 min-h-[50px] flex flex-col justify-center">
+                {(() => {
+                  const bgAttr = selectedDuck.attributes?.find(
+                    (attr) => String(attr?.trait_type || '').toLowerCase() === "background"
+                  );
+                  const bgDetails = bgAttr ? getBackgroundDetails(bgAttr.value) : null;
+                  
+                  const firstTraitWithLore = selectedDuck.attributes?.find(
+                    a => getLoreForTrait(a.trait_type, a.value)
+                  );
+                  const keyLore = firstTraitWithLore 
+                    ? getLoreForTrait(firstTraitWithLore.trait_type, firstTraitWithLore.value) 
+                    : getFallbackLore(selectedDuck);
+                  const excerpt = keyLore ? (keyLore.slice(0, 110) + (keyLore.length > 110 ? "..." : "")) : "";
+                  
+                  return (
+                    <div className="space-y-1">
+                      {bgDetails && (
+                        <div className="text-[8px] font-mono text-amber-400">
+                          ✦ ENVIRONMENTAL REALM: {bgDetails.title}
+                        </div>
+                      )}
+                      <p className="text-stone-300 italic leading-relaxed">
+                        "{excerpt}"
+                      </p>
+                    </div>
+                  );
+                })()}
+              </div>
+              
+              {/* Branding Footer */}
+              <div className="text-[8px] font-mono text-amber-500/40 uppercase tracking-widest mt-0.5 flex items-center gap-1">
+                ✦ DECENTDUCKS.ME • LORE BOOK ✦
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="mt-4 flex gap-2 w-full">
+              <button
+                onClick={exportAsPng}
+                disabled={isExporting}
+                className="flex-grow flex items-center justify-center gap-2 py-2 px-4 bg-amber-800 text-stone-100 font-serif font-bold text-xs rounded shadow hover:bg-amber-900 transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isExporting ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-stone-100/20 border-t-stone-100 rounded-full animate-spin"></div>
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-3.5 h-3.5" /> Download PNG
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => setIsShareModalOpen(false)}
+                className="py-2 px-4 border border-stone-700 text-stone-300 hover:text-stone-100 font-serif font-bold text-xs rounded hover:bg-stone-850 transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }
