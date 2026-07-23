@@ -57,11 +57,11 @@ const getTraitImage = (category, name) => {
     return "https://i.imgur.com/hHs5OUb.png";
   }
   if (category === "Eyewear") {
-    if (name === "Eyes 1 (Standard)") return "https://i.imgur.com/rOOti6Q.png";
-    if (name === "Eyes 2 (Determined)") return "https://i.imgur.com/MR175T2.png";
-    if (name === "Eyes 3 (Wise)") return "https://i.imgur.com/7poQkMh.png";
-    if (name === "Eyes 4 (Curious)") return "https://i.imgur.com/j2DcMVn.png";
-    if (name === "Black Goggles") return "https://i.imgur.com/gTGkcN6.png";
+    if (name === "Eyes 1 (Standard)" || name === "Eyes 1") return "https://i.imgur.com/rOOti6Q.png";
+    if (name === "Eyes 2 (Determined)" || name === "Eyes 2") return "https://i.imgur.com/MR175T2.png";
+    if (name === "Eyes 3 (Wise)" || name === "Eyes 3") return "https://i.imgur.com/7poQkMh.png";
+    if (name === "Eyes 4 (Curious)" || name === "Eyes 4") return "https://i.imgur.com/j2DcMVn.png";
+    if (name === "Eyes 5" || name === "Black Goggles") return "https://i.imgur.com/gTGkcN6.png";
     if (name === "Yellow Goggles") return "https://i.imgur.com/SOPVYLK.png";
     if (name === "Blue Goggles") return "https://i.imgur.com/qYm5w6J.png";
     if (name === "Black Shades") return "https://i.imgur.com/h3K0Dvv.png";
@@ -73,6 +73,7 @@ const getTraitImage = (category, name) => {
     if (name === "Yellow Visor") return "https://i.imgur.com/SWg2WqM.png";
     if (name === "Blue Visor") return "https://i.imgur.com/mSDeZ7E.png";
     if (name === "Purple Visor") return "https://i.imgur.com/txsBbs4.png";
+    if (name === "Rainbow Visor") return "https://i.imgur.com/A1kCNKS.png";
     return "https://i.imgur.com/A1kCNKS.png";
   }
   if (category === "Legend") {
