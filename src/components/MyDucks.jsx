@@ -435,9 +435,11 @@ export default function MyDucks() {
             >
               {/* Outer Golden Accented Border */}
               <div className="absolute inset-2 border border-amber-900/15 rounded-lg pointer-events-none"></div>
-              
-              {/* Header subtitle */}
-              <div className="text-[9px] tracking-widest font-mono text-amber-500/80 uppercase mb-2">
+                    {/* Header subtitle */}
+              <div
+                className="text-[9px] tracking-widest font-mono uppercase mb-2"
+                style={{ color: '#FFC107', fontWeight: 600 }}
+              >
                 Decent Ducks Registry
               </div>
               
@@ -457,13 +459,19 @@ export default function MyDucks() {
               </div>
               
               {/* Name */}
-              <h4 className="text-lg font-bold text-amber-100 mb-2.5 tracking-wide text-center">
+              <h4
+                className="text-lg font-bold mb-2.5 tracking-wide text-center"
+                style={{ color: '#FFFFFF' }}
+              >
                 {selectedDuck.name}
               </h4>
               
               {/* Attributes Grid */}
               <div className="w-full space-y-1 mb-3">
-                <h5 className="text-[8px] font-mono text-amber-500/50 uppercase tracking-wider text-left border-b border-amber-900/20 pb-0.5 mb-1">
+                <h5
+                  className="text-[8px] font-mono uppercase tracking-wider text-left border-b border-amber-900/20 pb-0.5 mb-1"
+                  style={{ color: '#FFC107' }}
+                >
                   Artistic Traits
                 </h5>
                 <div className="grid grid-cols-2 gap-1 text-[9px]">
@@ -471,9 +479,22 @@ export default function MyDucks() {
                     const displayCategory = DISPLAY_CATEGORIES[String(attr.trait_type || '').toLowerCase()] || attr.trait_type;
                     const displayValue = getDisplayValue(attr.trait_type, attr.value);
                     return (
-                      <div key={idx} className="bg-[#2C2421] border border-[#3D332D] p-1.5 rounded flex flex-col justify-between truncate">
-                        <span className="text-[7.5px] font-mono text-[#E2A85C] font-semibold uppercase truncate">{displayCategory}</span>
-                        <span className="text-white font-sans font-semibold text-[10px] truncate mt-0.5" title={displayValue}>
+                      <div
+                        key={idx}
+                        className="p-1.5 rounded flex flex-col justify-between truncate"
+                        style={{ backgroundColor: '#1E1B18', border: '1px solid #4A3E35' }}
+                      >
+                        <span
+                          className="text-[7.5px] font-mono uppercase truncate"
+                          style={{ color: '#FFC107', fontWeight: 600 }}
+                        >
+                          {displayCategory}
+                        </span>
+                        <span
+                          className="font-sans truncate mt-0.5"
+                          title={displayValue}
+                          style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '0.9rem' }}
+                        >
                           {displayValue}
                         </span>
                       </div>
@@ -483,7 +504,10 @@ export default function MyDucks() {
               </div>
               
               {/* Chronicle Snippet / Environment */}
-              <div className="w-full bg-[#1b130e] border border-amber-950/30 p-2.5 rounded-lg text-left text-[10px] mb-2.5 min-h-[50px] flex flex-col justify-center">
+              <div
+                className="w-full p-2.5 rounded-lg text-left text-[10px] mb-2.5 min-h-[50px] flex flex-col justify-center animate-none"
+                style={{ backgroundColor: '#1E1B18', border: '1px solid #4A3E35' }}
+              >
                 {(() => {
                   const bgAttr = selectedDuck.attributes?.find(
                     (attr) => String(attr?.trait_type || '').toLowerCase() === "background"
@@ -501,11 +525,17 @@ export default function MyDucks() {
                   return (
                     <div className="space-y-1">
                       {bgDetails && (
-                        <div className="text-[8.5px] font-mono text-[#E2A85C] font-semibold">
+                        <div
+                          className="text-[8.5px] font-mono"
+                          style={{ color: '#FFC107', fontWeight: 700 }}
+                        >
                           ✦ ENVIRONMENTAL REALM: {bgDetails.title}
                         </div>
                       )}
-                      <p className="text-white/95 italic leading-relaxed text-[10.5px]">
+                      <p
+                        className="leading-relaxed text-[10.5px]"
+                        style={{ color: '#FFFFFF', fontStyle: 'italic', opacity: 1 }}
+                      >
                         "{excerpt}"
                       </p>
                     </div>
@@ -514,7 +544,10 @@ export default function MyDucks() {
               </div>
               
               {/* Branding Footer */}
-              <div className="text-[8px] font-mono text-[#E2A85C]/75 font-semibold uppercase tracking-widest mt-0.5 flex items-center gap-1">
+              <div
+                className="text-[8px] font-mono uppercase tracking-widest mt-0.5 flex items-center gap-1"
+                style={{ color: '#E0D0C0' }}
+              >
                 ✦ DECENTDUCKS.ME • LORE BOOK ✦
               </div>
             </div>
