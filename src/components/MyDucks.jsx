@@ -407,7 +407,7 @@ export default function MyDucks() {
 
       {/* Share / Social Post Card Modal Overlay */}
       {isShareModalOpen && selectedDuck && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto backdrop-blur-sm animate-fade-in sanctuary-export-modal">
           <div className="bg-[#1c140e] border-2 border-amber-900/40 rounded-2xl max-w-sm w-full shadow-2xl relative p-5 flex flex-col items-center">
             
             {/* Close Button */}
@@ -467,7 +467,7 @@ export default function MyDucks() {
               </h4>
               
               {/* Attributes Grid */}
-              <div className="w-full space-y-1 mb-3">
+              <div className="w-full space-y-1 mb-3 artistic-traits-container">
                 <h5
                   className="text-[8px] font-mono uppercase tracking-wider text-left border-b border-amber-900/20 pb-0.5 mb-1"
                   style={{ color: '#FFC107' }}
@@ -491,7 +491,7 @@ export default function MyDucks() {
                           {displayCategory}
                         </span>
                         <span
-                          className="font-sans truncate mt-0.5 export-card-trait-value"
+                          className="font-sans truncate mt-0.5 export-card-trait-value trait-value"
                           title={displayValue}
                           style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '0.9rem' }}
                         >
@@ -505,7 +505,7 @@ export default function MyDucks() {
               
               {/* Chronicle Snippet / Environment */}
               <div
-                className="w-full p-2.5 rounded-lg text-left text-[10px] mb-2.5 min-h-[50px] flex flex-col justify-center animate-none"
+                className="w-full p-2.5 rounded-lg text-left text-[10px] mb-2.5 min-h-[50px] flex flex-col justify-center animate-none environmental-realm-container"
                 style={{ backgroundColor: '#1E1B18', border: '1px solid #4A3E35' }}
               >
                 {(() => {

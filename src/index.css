@@ -144,6 +144,25 @@ body {
   color: unset; /* Reset global black/charcoal overrides */
 }
 
+/* Force all trait *values* in the export card to white */
+.sanctuary-export-modal .artistic-traits-container p, 
+.sanctuary-export-modal .artistic-traits-container span.trait-value {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  /* Prevent dark theme color inheritance */
+  -webkit-text-fill-color: #FFFFFF !important;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Force the main environmental description text to white */
+.sanctuary-export-modal .environmental-realm-container p,
+.sanctuary-export-modal .environmental-realm-container p span {
+  color: #FFFFFF !important;
+  opacity: 0.9 !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+
 /* Force all trait value text in export modal to pure white */
 .export-card-trait-value,
 .sanctuary-export .trait-value,
