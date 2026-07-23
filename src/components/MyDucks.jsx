@@ -257,7 +257,7 @@ export default function MyDucks() {
                   </h2>
                   <button
                     onClick={() => setIsShareModalOpen(true)}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-850 text-stone-100 font-serif font-bold text-xs rounded shadow hover:bg-amber-950 transition-all cursor-pointer w-fit self-center sm:self-auto"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-850 text-stone-100 font-serif font-bold text-xs rounded shadow hover:bg-amber-950 transition-all cursor-pointer w-fit self-center sm:self-auto share-card-btn"
                   >
                     <Camera className="w-3.5 h-3.5" /> 📸 Share Card
                   </button>

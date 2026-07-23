@@ -194,3 +194,22 @@ body {
   color: #E0D0C0 !important;
 }
 
+/* Force high-contrast styling on the share card trigger button */
+.share-card-btn {
+  background-color: #8C4327 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  padding: 8px 14px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.share-card-btn:hover {
+  background-color: #70331C !important;
+  transform: translateY(-1px) !important;
+}
+
