@@ -79,17 +79,17 @@ export const EYE_TRAIT_MAP = {
   "eyes 2": "Eyes 2",
   "eyes 3": "Eyes 3",
   "eyes 4": "Eyes 4",
-  "eyes 5": "Black Goggles",
+  "eyes 5": "Eyes 5",
   "eyes:eyes 1": "Eyes 1",
   "eyes:eyes 2": "Eyes 2",
   "eyes:eyes 3": "Eyes 3",
   "eyes:eyes 4": "Eyes 4",
-  "eyes:eyes 5": "Black Goggles",
+  "eyes:eyes 5": "Eyes 5",
   "eyewear:eyes 1": "Eyes 1",
   "eyewear:eyes 2": "Eyes 2",
   "eyewear:eyes 3": "Eyes 3",
   "eyewear:eyes 4": "Eyes 4",
-  "eyewear:eyes 5": "Black Goggles",
+  "eyewear:eyes 5": "Eyes 5",
   "green viser": "Eyes 4",
   "black goggles": "Black Goggles"
 };
@@ -97,7 +97,8 @@ export const EYE_TRAIT_MAP = {
 export const EYEWEAR_MAP = {
   "mlg glasses": "MLG Shades",
   "mlg shades": "MLG Shades",
-  "eyes 5": "Black Goggles",
+  "eyes 4": "Eyes 4",
+  "eyes 5": "Eyes 5",
   "black goggles": "Black Goggles",
   "black goggle": "Black Goggles"
 };
