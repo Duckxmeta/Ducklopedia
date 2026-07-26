@@ -213,3 +213,40 @@ body {
   transform: translateY(-1px) !important;
 }
 
+/* Sanctuary Export Modal High-Contrast Text Overrides */
+.sanctuary-export-modal .export-modal-title,
+.content-container .sanctuary-export-modal h3.export-modal-title {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+
+.sanctuary-export-modal .export-modal-subtitle,
+.content-container .sanctuary-export-modal p.export-modal-subtitle {
+  color: #E0D0C0 !important;
+  opacity: 0.85 !important;
+  -webkit-text-fill-color: #E0D0C0 !important;
+}
+
+/* Main Duck ID Display inside Artwork Frame */
+.sanctuary-export-modal .export-card-id,
+.content-container .sanctuary-export-modal .export-card-id {
+  color: #FFC107 !important;
+  font-weight: 700 !important;
+  -webkit-text-fill-color: #FFC107 !important;
+}
+
+/* Cancel Button */
+.sanctuary-export-modal .export-cancel-btn,
+.content-container .sanctuary-export-modal button.export-cancel-btn {
+  color: #FFFFFF !important;
+  border: 1px solid #666666 !important;
+  background-color: transparent !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+
+.sanctuary-export-modal .export-cancel-btn:hover,
+.content-container .sanctuary-export-modal button.export-cancel-btn:hover {
+  background-color: #27201b !important;
+}
+

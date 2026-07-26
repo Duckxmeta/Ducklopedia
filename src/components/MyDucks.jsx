@@ -445,8 +445,8 @@ export default function MyDucks() {
 
             {/* Modal Header */}
             <div className="text-center mb-4">
-              <h3 className="font-serif text-amber-100 text-lg font-bold">📸 Sanctuary Export</h3>
-              <p className="text-[10px] text-stone-400 font-sans mt-0.5">
+              <h3 className="font-serif text-amber-100 text-lg font-bold export-modal-title">📸 Sanctuary Export</h3>
+              <p className="text-[10px] text-stone-400 font-sans mt-0.5 export-modal-subtitle">
                 Screenshot this card or download it directly to share on X / TikTok.
               </p>
             </div>
@@ -478,7 +478,7 @@ export default function MyDucks() {
                     e.target.src = isEgg ? "https://i.imgur.com/jwun0Ca.png" : "https://i.imgur.com/pcn60EC.png";
                   }}
                 />
-                <div className="absolute bottom-1.5 right-1.5 bg-amber-950/85 border border-amber-500/30 px-1.5 py-0.5 rounded text-[8px] font-mono text-amber-400">
+                <div className="absolute bottom-1.5 right-1.5 bg-amber-950/85 border border-amber-500/30 px-1.5 py-0.5 rounded text-[8px] font-mono text-amber-400 export-card-id">
                   ID: #{selectedDuck.name.replace(/^\D+/g, "") || selectedDuck.mint.slice(0, 6)}
                 </div>
               </div>
@@ -636,7 +636,7 @@ export default function MyDucks() {
               </button>
               <button
                 onClick={() => setIsShareModalOpen(false)}
-                className="py-2 px-4 border border-stone-700 text-stone-300 hover:text-stone-100 font-serif font-bold text-xs rounded hover:bg-stone-850 transition-all cursor-pointer"
+                className="py-2 px-4 border border-stone-700 text-stone-300 hover:text-stone-100 font-serif font-bold text-xs rounded hover:bg-stone-850 transition-all cursor-pointer export-cancel-btn"
               >
                 Cancel
               </button>
