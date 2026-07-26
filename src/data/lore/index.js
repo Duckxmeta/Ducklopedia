@@ -129,7 +129,7 @@ export function getLoreForTrait(category, traitValue) {
   // Helper to ensure we return a string even if the database has a structured object
   const resolveLoreString = (val) => {
     if (val && typeof val === "object") {
-      return val.lore || "";
+      return val.lore || val.description || "";
     }
     return val;
   };
