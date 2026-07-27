@@ -454,7 +454,7 @@ export default function MyDucks() {
             {/* Trading Card content targeting html2canvas */}
             <div
               id="social-share-card-content"
-              className="p-5 bg-[#16100b] border border-amber-950/40 rounded-xl w-full flex flex-col items-center text-stone-100 font-serif relative overflow-hidden"
+              className="p-5 bg-[#16100b] border border-amber-950/40 rounded-xl w-full flex flex-col items-center text-stone-100 font-serif relative overflow-hidden export-card-content export-card-body"
               style={{ width: "320px" }}
             >
               {/* Outer Golden Accented Border */}
@@ -485,7 +485,7 @@ export default function MyDucks() {
               
               {/* Name */}
               <h4
-                className="text-lg font-bold mb-2.5 tracking-wide text-center"
+                className="text-lg font-bold mb-2.5 tracking-wide text-center duck-id-heading"
                 style={{ color: '#FFFFFF' }}
               >
                 {selectedDuck.name}

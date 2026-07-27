@@ -250,3 +250,14 @@ body {
   background-color: #27201b !important;
 }
 
+/* Force the main large Duck ID heading to pure white */
+.sanctuary-export-modal .export-card-content h1,
+.sanctuary-export-modal .export-card-content .duck-id-heading,
+.sanctuary-export-modal .export-card-body > p:first-of-type,
+.content-container .sanctuary-export-modal .export-card-content .duck-id-heading {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  -webkit-text-fill-color: #FFFFFF !important; /* Ensure override */
+  text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5) !important;
+}
+
